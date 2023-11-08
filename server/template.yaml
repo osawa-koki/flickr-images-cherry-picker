@@ -10,14 +10,16 @@ Globals:
     Timeout: 3
 
 Resources:
-  HelloWorldFunction:
+  PingFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: !Sub ${AWS::StackName}-ping
+      Description: "Ping"
       PackageType: Image
       Architectures:
         - x86_64
       Events:
-        HelloWorld:
+        LambdaFunction:
           Type: Api
           Properties:
             Path: /
@@ -28,6 +30,6 @@ Resources:
       DockerTag: python3.10-v1
 
 Outputs:
-  HelloWorldApi:
+  LambdaFunctionApi:
     Description: "API Gateway endpoint URL"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
