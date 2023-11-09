@@ -22,8 +22,8 @@ Resources:
         LambdaFunction:
           Type: Api
           Properties:
-            Path: /
-            Method: get
+            Path: /{proxy+}
+            Method: ANY
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: ./src/

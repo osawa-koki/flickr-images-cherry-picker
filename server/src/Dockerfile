@@ -1,8 +1,5 @@
 FROM public.ecr.aws/lambda/python:3.10
-
-COPY app.py requirements.txt ./
-
+COPY requirements.txt ./
 RUN python3.10 -m pip install -r requirements.txt -t .
-
-# Command can be overwritten by providing a different command in the template directly.
+COPY app.py ./
 CMD ["app.lambda_handler"]
