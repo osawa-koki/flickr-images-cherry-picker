@@ -26,6 +26,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Create `.env` file
         run: echo $'${{ secrets.LAMBDA_DOTENV }}' >> ./.env
+        working-directory: ${{ env.server-directory }}src/
       - name: Build
         run: sam build --use-container
       - name: Deploy
