@@ -1,36 +1,12 @@
-import os
-
 from fastapi import FastAPI
 from initializer import initializer
 from mangum import Mangum
+from routers import ping, setting
 
-app = FastAPI()
 initializer()
 
-
-@app.get("/api/envs", status_code=200)
-async def envs_get():
-    return os.environ
-
-
-@app.get("/api/ping", status_code=200)
-async def ping_get():
-    return {"message": "Hello GET."}
-
-
-@app.post("/api/ping", status_code=200)
-async def ping_post():
-    return {"message": "Hello POST."}
-
-
-@app.put("/api/ping", status_code=200)
-async def ping_put():
-    return {"message": "Hello PUT."}
-
-
-@app.delete("/api/ping", status_code=200)
-async def ping_delete():
-    return {"message": "Hello DELETE."}
-
+app = FastAPI()
+app.include_router(ping.router)
+app.include_router(setting.router)
 
 lambda_handler = Mangum(app)
