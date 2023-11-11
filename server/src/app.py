@@ -1,9 +1,8 @@
 import os
 
 from fastapi import FastAPI
-from mangum import Mangum
-
 from initializer import initializer
+from mangum import Mangum
 
 app = FastAPI()
 initializer()
@@ -32,5 +31,6 @@ async def ping_put():
 @app.delete("/api/ping", status_code=200)
 async def ping_delete():
     return {"message": "Hello DELETE."}
+
 
 lambda_handler = Mangum(app)
