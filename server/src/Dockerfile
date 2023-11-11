@@ -1,5 +1,5 @@
 FROM public.ecr.aws/lambda/python:3.10
-COPY requirements.txt ./
+COPY ./requirements.txt ./
 RUN python3.10 -m pip install -r requirements.txt -t .
-COPY app.py ./
+COPY ./ ./
 CMD ["app.lambda_handler"]
