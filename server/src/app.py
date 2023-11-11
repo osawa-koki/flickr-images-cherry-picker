@@ -1,7 +1,17 @@
+import os
+
 from fastapi import FastAPI
 from mangum import Mangum
 
+from initializer import initializer
+
 app = FastAPI()
+initializer()
+
+
+@app.get("/api/envs", status_code=200)
+async def envs_get():
+    return os.environ
 
 
 @app.get("/api/ping", status_code=200)
