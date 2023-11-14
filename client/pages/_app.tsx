@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 import { type AppProps } from 'next/app'
 import Head from 'next/head'
 
@@ -9,7 +9,36 @@ import '../styles/menu.scss'
 import setting from '../setting'
 import Layout from '../components/Layout'
 
+const localStorageKeys = {
+  accessToken: 'AccessToken'
+}
+
+export const CognitoUserContext = createContext<{
+  accessToken: string | null
+  setAccessToken: React.Dispatch<React.SetStateAction<string | null>>
+}>({
+  accessToken: null,
+  setAccessToken: () => {}
+})
+
 export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.Element {
+  const [accessToken, setAccessToken] = useState<string | null>(null)
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem(localStorageKeys.accessToken)
+    if (accessToken != null) {
+      setAccessToken(JSON.parse(accessToken))
+    }
+  }, [])
+
+  useEffect(() => {
+    if (accessToken != null) {
+      localStorage.setItem(localStorageKeys.accessToken, JSON.stringify(accessToken))
+    } else {
+      localStorage.removeItem(localStorageKeys.accessToken)
+    }
+  }, [accessToken])
+
   return (
     <>
       <Head>
@@ -22,9 +51,14 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
           href={`${setting.basePath}/favicon.ico`}
         />
       </Head>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <CognitoUserContext.Provider value={{
+        accessToken,
+        setAccessToken
+      }}>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </CognitoUserContext.Provider>
     </>
   )
 }
