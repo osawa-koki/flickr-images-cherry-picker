@@ -1,6 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import setting from '../setting'
+import AuthComponent from '../components/Auth'
 
 export default function Home (): React.JSX.Element {
   return (
@@ -10,6 +11,8 @@ export default function Home (): React.JSX.Element {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <Image id='Logo' className='mt-3 mw-100 border rounded-circle' width={100} height={100} src={`${setting.basePath}/tako.png`} alt='Logo' />
       </div>
+      <hr className='my-5' />
+      <AuthComponent />
     </>
   )
 }
