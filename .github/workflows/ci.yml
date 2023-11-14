@@ -3,6 +3,7 @@ name: ci
 on: [push]
 
 env:
+  project-name: ${{ secrets.PROJECT_NAME }}
   server-directory: ./server/
   client-directory: ./client/
 
@@ -54,6 +55,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Append data to `.env.local`
+        run: chmod +x ./initializer.sh && ./initializer.sh ${{ env.project-name }}
       - name: Cache node_modules
         id: node_modules_cache_id
         uses: actions/cache@v3
