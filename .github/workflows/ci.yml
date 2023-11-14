@@ -4,9 +4,10 @@ on: [push]
 
 env:
   server-directory: ./server/
+  client-directory: ./client/
 
 jobs:
-  build:
+  server-ci:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -38,3 +39,35 @@ jobs:
       run: python -m isort --check ./src/ ./tests/
     - name: mypy type checking
       run: python -m mypy --ignore-missing-imports ./src/ ./tests/
+  client-ci:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        node-version: ["20.x"]
+    defaults:
+      run:
+        working-directory: ${{ env.client-directory }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Cache node_modules
+        id: node_modules_cache_id
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules/
+          key: node-modules-${{ matrix.node-version }}-${{ hashFiles('./**/yarn.lock') }}
+      - name: Install dependencies
+        if: steps.node_modules_cache_id.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile --non-interactive
+      - name: Run test
+        run: yarn test
+      - name: Type check
+        run: yarn type-check
+      - name: Linter check
+        run: yarn lint
+      - name: test build
+        run: yarn build
