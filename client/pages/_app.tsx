@@ -1,8 +1,11 @@
 import React, { createContext, useEffect, useState } from 'react'
 import { type AppProps } from 'next/app'
 import Head from 'next/head'
+import { ToastContainer } from 'react-toastify'
 
+import 'react-toastify/dist/ReactToastify.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
+
 import '../styles/style.scss'
 import '../styles/menu.scss'
 
@@ -57,6 +60,7 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
       }}>
         <Layout>
           <Component {...pageProps} />
+          <ToastContainer />
         </Layout>
       </CognitoUserContext.Provider>
     </>
