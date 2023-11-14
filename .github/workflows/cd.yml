@@ -5,9 +5,19 @@ on:
   push:
     tags: [ v-* ]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
 env:
-  server-directory: ./server/
   project-name: ${{ secrets.PROJECT_NAME }}
+  server-directory: ./server/
+  client-directory: ./client/
 
 jobs:
   sam-deploy:
@@ -31,3 +41,47 @@ jobs:
         run: sam build --use-container
       - name: Deploy
         run: sam deploy --stack-name ${{ env.project-name }}
+  client-build:
+    needs: sam-deploy
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: ${{ env.client-directory }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: yarn
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+        with:
+          static_site_generator: next
+      - name: Restore cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.client-directory }}.next/cache
+          # Generate a new cache whenever packages or source files change.
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          # If source files changed but packages didn't, rebuild from a prior cache.
+          restore-keys: ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --non-interactive --production
+      - name: Build with Next.js
+        run: yarn build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ${{ env.client-directory }}dist/
+  client-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-22.04
+    needs: client-build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
