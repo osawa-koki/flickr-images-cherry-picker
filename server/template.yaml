@@ -22,6 +22,44 @@ Resources:
       VersioningConfiguration:
         Status: Enabled
 
+  # ユーザプール(認証部分)の定義
+  # Ref: https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/aws-resource-cognito-userpool.html
+  MyCognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub ${AWS::StackName}-user-pool
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+          RequireUppercase: true
+          TemporaryPasswordValidityDays: 7
+      Schema:
+        - AttributeDataType: String
+          Name: email
+          Required: true
+        - AttributeDataType: String
+          Name: name
+          Required: true
+        - AttributeDataType: String
+          Name: comment
+          Mutable: true
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+
+  # ユーザプールクライアントの定義
+  # Ref: https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/aws-resource-cognito-userpoolclient.html
+  MyCognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: !Sub ${AWS::StackName}-client-app
+      UserPoolId: !Ref MyCognitoUserPool
+      GenerateSecret: false
+
   MyLambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -73,6 +111,12 @@ Resources:
       DockerTag: python3.10-v1
 
 Outputs:
+  UserPoolId:
+    Description: "User Pool ID"
+    Value: !Ref MyCognitoUserPool
+  UserPoolClientId:
+    Description: "User Pool Client ID"
+    Value: !Ref MyCognitoUserPoolClient
   S3Endpoint:
     Description: "S3 endpoint URL"
     Value: !Sub "https://${MyBucket}.s3.amazonaws.com"
