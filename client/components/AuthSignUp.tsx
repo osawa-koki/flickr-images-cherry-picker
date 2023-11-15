@@ -9,10 +9,11 @@ import { Alert, Button, Form } from 'react-bootstrap'
 
 interface Props {
   setPageOption: React.Dispatch<React.SetStateAction<pageOptionEnum>>
+  setTmpEmail: React.Dispatch<React.SetStateAction<string>>
 }
 
 export default function AuthSignUp (props: Props): React.JSX.Element {
-  const { setPageOption } = props
+  const { setPageOption, setTmpEmail } = props
 
   const gotoSignIn = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>): void => {
     event.preventDefault()
@@ -55,6 +56,7 @@ export default function AuthSignUp (props: Props): React.JSX.Element {
           // 登録が成功した場合の処理
           const cognitoUser = result.user
           toast.success(`User ${cognitoUser.getUsername()} has signed up!`)
+          setTmpEmail(email)
           setPageOption('ConfirmRegistration')
         } finally {
           setIsLoading(false)
