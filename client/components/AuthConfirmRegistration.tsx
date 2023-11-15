@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js'
 import { toast } from 'react-toastify'
+import { Alert, Button, Form } from 'react-bootstrap'
 
 import { userPool } from '../src/cognito'
 
 import { type pageOptionEnum } from './Auth'
-import { Alert, Button, Form } from 'react-bootstrap'
 
 interface Props {
   setPageOption: React.Dispatch<React.SetStateAction<pageOptionEnum>>
@@ -55,7 +55,7 @@ export default function AuthConfirmRegistration (props: Props): React.JSX.Elemen
         <h2>Confirm Registration</h2>
         <Form.Group controlId='formBasicEmail' className='mt-3'>
           <Form.Label>Email address</Form.Label>
-          <Form.Control type='email' value={email} onClick={(event) => { setEmail(event.currentTarget.value) }}/>
+          <Form.Control type='email' value={email} onInput={(event) => { setEmail(event.currentTarget.value) }}/>
         </Form.Group>
         <Form.Group controlId='formBasicCode' className='mt-3'>
           <Form.Label>Code</Form.Label>

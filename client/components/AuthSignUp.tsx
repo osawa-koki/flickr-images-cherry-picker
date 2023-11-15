@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
+import { Alert, Button, Form } from 'react-bootstrap'
 
 import { userPool } from '../src/cognito'
 import makeCognitoUserAttributes from '../src/makeCognitoUserAttributes'
 
 import { type pageOptionEnum } from './Auth'
-import { Alert, Button, Form } from 'react-bootstrap'
 
 interface Props {
   setPageOption: React.Dispatch<React.SetStateAction<pageOptionEnum>>
@@ -14,11 +14,6 @@ interface Props {
 
 export default function AuthSignUp (props: Props): React.JSX.Element {
   const { setPageOption, setTmpEmail } = props
-
-  const gotoSignIn = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>): void => {
-    event.preventDefault()
-    setPageOption('SignIn')
-  }
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -87,7 +82,7 @@ export default function AuthSignUp (props: Props): React.JSX.Element {
         </Button>
         <hr />
         <Alert variant='info' className='mt-3'>
-          サインインは<Alert.Link onClick={gotoSignIn} role='button'>こちら</Alert.Link>。
+          サインインは<Alert.Link onClick={() => { setPageOption('SignIn') }} role='button'>こちら</Alert.Link>。
           <hr />
           確認コードを入力する場合は、<Alert.Link onClick={() => { setPageOption('ConfirmRegistration') }}>こちら</Alert.Link>。
           <hr />
