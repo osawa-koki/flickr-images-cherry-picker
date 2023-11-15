@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import * as AmazonCognitoIdentity from 'amazon-cognito-identity-js'
 import { toast } from 'react-toastify'
+import { Alert, Button, Form } from 'react-bootstrap'
 
 import { userPool } from '../src/cognito'
 
 import { type pageOptionEnum } from './Auth'
-import { Alert, Button, Form } from 'react-bootstrap'
 
 interface Props {
   setPageOption: React.Dispatch<React.SetStateAction<pageOptionEnum>>
