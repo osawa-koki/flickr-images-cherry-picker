@@ -5,7 +5,7 @@ import { toast } from 'react-toastify'
 import { userPool } from '../src/cognito'
 
 import { type pageOptionEnum } from './Auth'
-import { Button, Form } from 'react-bootstrap'
+import { Alert, Button, Form } from 'react-bootstrap'
 
 interface Props {
   setPageOption: React.Dispatch<React.SetStateAction<pageOptionEnum>>
@@ -17,6 +17,7 @@ export default function AuthConfirmRegistration (props: Props): React.JSX.Elemen
 
   const [isLoading, setIsLoading] = useState(false)
 
+  const [email, setEmail] = useState(tmpEmail)
   const [code, setCode] = useState('')
 
   const confirmRegistration = async (): Promise<void> => {
@@ -54,7 +55,7 @@ export default function AuthConfirmRegistration (props: Props): React.JSX.Elemen
         <h2>Confirm Registration</h2>
         <Form.Group controlId='formBasicEmail' className='mt-3'>
           <Form.Label>Email address</Form.Label>
-          <Form.Control type='email' value={tmpEmail} disabled/>
+          <Form.Control type='email' value={email} onClick={(event) => { setEmail(event.currentTarget.value) }}/>
         </Form.Group>
         <Form.Group controlId='formBasicCode' className='mt-3'>
           <Form.Label>Code</Form.Label>
@@ -64,6 +65,12 @@ export default function AuthConfirmRegistration (props: Props): React.JSX.Elemen
         <Button variant='primary' className='mt-3' onClick={confirmRegistration} disabled={isLoading}>
           Confirm Registration
         </Button>
+        <hr />
+        <Alert variant='info'>
+          確認コードを再送信する場合は、
+          <Alert.Link onClick={() => { setPageOption('ResendCode') }}>こちら</Alert.Link>
+          をクリックしてください。
+        </Alert>
       </div>
     </>
   )
