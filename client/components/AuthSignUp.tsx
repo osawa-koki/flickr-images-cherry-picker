@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
+import { Alert, Button, Form } from 'react-bootstrap'
 
 import { userPool } from '../src/cognito'
 import makeCognitoUserAttributes from '../src/makeCognitoUserAttributes'
 
 import { type pageOptionEnum } from './Auth'
-import { Alert, Button, Form } from 'react-bootstrap'
 
 interface Props {
   setPageOption: React.Dispatch<React.SetStateAction<pageOptionEnum>>
