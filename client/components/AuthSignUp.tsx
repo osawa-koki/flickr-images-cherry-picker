@@ -87,7 +87,11 @@ export default function AuthSignUp (props: Props): React.JSX.Element {
         </Button>
         <hr />
         <Alert variant='info' className='mt-3'>
-          サインインは<a className='link-primary' onClick={gotoSignIn} role='button'>こちら</a>。
+          サインインは<Alert.Link onClick={gotoSignIn} role='button'>こちら</Alert.Link>。
+          <hr />
+          確認コードを入力する場合は、<Alert.Link onClick={() => { setPageOption('ConfirmRegistration') }}>こちら</Alert.Link>。
+          <hr />
+          確認コードを再送信する場合は、<Alert.Link onClick={() => { setPageOption('ResendCode') }}>こちら</Alert.Link>。
         </Alert>
       </div>
     </>
