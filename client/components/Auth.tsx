@@ -4,7 +4,7 @@ import AuthSignUp from './AuthSignUp'
 import AuthConfirmRegistration from './AuthConfirmRegistration'
 import AuthResendCode from './AuthResendCode'
 
-export type pageOptionEnum = 'SignUp' | 'ConfirmRegistration' | 'SignIn' | 'ResendCode'
+export type pageOptionEnum = 'SignUp' | 'ConfirmRegistration' | 'ResendCode' | 'SignIn'
 
 export default function Auth (): React.JSX.Element {
   const [pageOption, setPageOption] = useState<pageOptionEnum>('SignUp')
