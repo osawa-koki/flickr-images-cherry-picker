@@ -23,7 +23,7 @@ interface FlickrPhoto {
   height_q: number
 }
 
-export default function FlickrPage (): React.JSX.Element {
+export default function SearchPage (): React.JSX.Element {
   const {
     createGroup,
     getPhotos,
