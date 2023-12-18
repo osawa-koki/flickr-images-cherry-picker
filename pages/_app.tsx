@@ -49,7 +49,7 @@ const getLocalStorageKey = (group: string): string => `_group:${group}`
 export default function MyApp ({ Component, pageProps, router }: AppProps): React.JSX.Element {
   const getGroups = (): string[] => {
     const groups = Object.keys(localStorage)
-    return groups
+    return groups.filter((group) => group.startsWith('_group:')).map((group) => group.replace(/^_group:/, ''))
   }
 
   const createGroup = (group: string): void => {
