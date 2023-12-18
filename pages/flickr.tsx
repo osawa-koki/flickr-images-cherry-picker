@@ -2,7 +2,8 @@
 import React, { useMemo, useState } from 'react'
 import Image from 'next/image'
 import { type FlickrPhotosSearchParams, createFlickr } from 'flickr-sdk'
-import { Button, Form } from 'react-bootstrap'
+import { Button, Card, Form } from 'react-bootstrap'
+import { toast } from 'react-toastify'
 
 const flickr = createFlickr(process.env.NEXT_PUBLIC_FLICKR_API_KEY!)
 
@@ -52,11 +53,10 @@ export default function FlickrPage (): React.JSX.Element {
       per_page: perPage.toString()
     })
       .then((res) => {
-        console.log(res.photos.photo)
         setPhotos(res.photos.photo)
       })
       .catch((err) => {
-        console.error(err)
+        toast.error(err.message)
       })
       .finally(() => {
         setIsLoading(false)
@@ -82,7 +82,9 @@ export default function FlickrPage (): React.JSX.Element {
       <hr />
       <div className='d-flex flex-wrap'>
         {photos.map((photo) => (
-          <Image key={photo.id} alt={text} src={photo.url_q} width={photo.width_q} height={photo.height_q} />
+          <Card key={photo.id} className='m-1'>
+            <Image alt={text} src={photo.url_q} width={photo.width_q} height={photo.height_q} />
+          </Card>
         ))}
       </div>
     </>
