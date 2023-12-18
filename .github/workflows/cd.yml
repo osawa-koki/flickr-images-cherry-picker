@@ -46,7 +46,7 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile --non-interactive --production
       - name: Create `.env.local`
-        run: mv ./.env.local.example ./.env.local
+        run: echo $'${{ secrets.ENV_LOCAL }}' > ./.env.local
       - name: Build with Next.js
         run: yarn build
       - name: Upload artifact
