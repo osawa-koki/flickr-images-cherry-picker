@@ -1,11 +1,11 @@
 {
-  "name": "nextjs-template",
-  "description": "My favorite Next.js project",
+  "name": "flickr-images-cherry-picker",
+  "description": "🍒🍒🍒 Flickrの画像をチェリーピックするためのツールです！",
   "author": "osawa-koki",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/osawa-koki/nextjs-template.git"
+    "url": "https://github.com/osawa-koki/flickr-images-cherry-picker.git"
   },
   "engines": {
     "node": ">=18.0.0",

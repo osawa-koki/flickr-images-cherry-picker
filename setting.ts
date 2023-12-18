@@ -5,7 +5,7 @@ const setting = {
   isProd,
   basePath: Env.basePath,
   apiPath: isProd ? '' : 'http://localhost:8000',
-  title: '🐸 Next.js Template 🐸'
+  title: '🍒 flickr-images-cherry-picker 🍒'
 }
 
 export default setting
