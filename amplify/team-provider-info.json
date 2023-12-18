@@ -17,6 +17,9 @@
           "appId": "d1yn16rkgyizvp",
           "type": "manual"
         }
+      },
+      "auth": {
+        "cherrypickercab53ef9": {}
       }
     }
   }
