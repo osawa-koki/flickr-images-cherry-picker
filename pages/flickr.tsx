@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import React, { useMemo, useState } from 'react'
+
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import { type FlickrPhotosSearchParams, createFlickr } from 'flickr-sdk'
 import { Button, Card, Form } from 'react-bootstrap'
 import { toast } from 'react-toastify'
+import { PhotosContext } from './_app'
 
 const flickr = createFlickr(process.env.NEXT_PUBLIC_FLICKR_API_KEY!)
 
@@ -22,8 +24,13 @@ interface FlickrPhoto {
 }
 
 export default function FlickrPage (): React.JSX.Element {
+  const {
+    createGroup
+  } = useContext(PhotosContext)
+
   const [isLoading, setIsLoading] = useState(false)
 
+  const [group, setGroup] = useState('')
   const [text, setText] = useState('')
   const [perPage, _setPerPage] = useState('500')
   const setPerPage = (value: string): void => {
@@ -47,6 +54,7 @@ export default function FlickrPage (): React.JSX.Element {
       setIsLoading(false)
       return
     }
+    createGroup(group)
     flickr.flickr('flickr.photos.search', {
       ...baseFlickrPhotosSearchParams,
       text,
@@ -67,8 +75,16 @@ export default function FlickrPage (): React.JSX.Element {
     return text !== '' && perPage !== ''
   }, [text, perPage])
 
+  useEffect(() => {
+    setPhotos([])
+  }, [group])
+
   return (
     <>
+      <Form.Group className='mt-3' controlId='formControlText'>
+        <Form.Label>Group</Form.Label>
+        <Form.Control type='text' placeholder='Enter group' value={group} onChange={(e) => { setGroup(e.target.value) }} />
+      </Form.Group>
       <Form.Group className='mt-3' controlId='formControlText'>
         <Form.Label>Search Text</Form.Label>
         <Form.Control type='text' placeholder='Enter search text' value={text} onChange={(e) => { setText(e.target.value) }} />
@@ -90,3 +106,5 @@ export default function FlickrPage (): React.JSX.Element {
     </>
   )
 }
+
+/* eslint-enable @typescript-eslint/no-non-null-assertion */
