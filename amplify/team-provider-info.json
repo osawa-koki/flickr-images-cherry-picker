@@ -10,6 +10,14 @@
       "StackName": "amplify-cherrypicker-dev-173943",
       "StackId": "arn:aws:cloudformation:ap-northeast-1:938385028059:stack/amplify-cherrypicker-dev-173943/ff766cf0-9d80-11ee-b4c8-06fb5d4be2b3",
       "AmplifyAppId": "d1yn16rkgyizvp"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d1yn16rkgyizvp",
+          "type": "manual"
+        }
+      }
     }
   }
 }
