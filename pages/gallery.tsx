@@ -25,7 +25,9 @@ interface FlickrPhoto {
 
 export default function FlickrPage (): React.JSX.Element {
   const {
-    createGroup
+    createGroup,
+    getPhotos,
+    savePhotos
   } = useContext(PhotosContext)
 
   const [isLoading, setIsLoading] = useState(false)
@@ -46,6 +48,7 @@ export default function FlickrPage (): React.JSX.Element {
   }
 
   const [photos, setPhotos] = useState<FlickrPhoto[]>([])
+  const [selectedPhotos, setSelectedPhotos] = useState<string[]>([])
 
   const search = (): void => {
     setIsLoading(true)
@@ -55,6 +58,7 @@ export default function FlickrPage (): React.JSX.Element {
       return
     }
     createGroup(group)
+    setSelectedPhotos(getPhotos(group))
     flickr.flickr('flickr.photos.search', {
       ...baseFlickrPhotosSearchParams,
       text,
@@ -79,6 +83,10 @@ export default function FlickrPage (): React.JSX.Element {
     setPhotos([])
   }, [group])
 
+  useEffect(() => {
+    savePhotos(group, selectedPhotos)
+  }, [selectedPhotos])
+
   return (
     <>
       <Form.Group className='mt-3' controlId='formControlText'>
@@ -98,9 +106,23 @@ export default function FlickrPage (): React.JSX.Element {
       <hr />
       <div className='d-flex flex-wrap'>
         {photos.map((photo) => (
-          <Card key={photo.id} className='m-1'>
-            <Image alt={text} src={photo.url_q} width={photo.width_q} height={photo.height_q} />
-          </Card>
+          selectedPhotos.includes(photo.url_q)
+            ? (
+            <Card key={photo.url_q} className='m-2' style={{ width: `${photo.width_q}px` }}>
+              <Image alt={text} src={photo.url_q} width={photo.width_q} height={photo.height_q} />
+              <Card.Body>
+                <Button size='sm' variant='danger' onClick={() => { setSelectedPhotos(selectedPhotos.filter((selectedPhoto) => selectedPhoto !== photo.url_q)) }}>Remove</Button>
+              </Card.Body>
+            </Card>
+              )
+            : (
+            <Card key={photo.url_q} className='m-2' style={{ width: `${photo.width_q}px` }}>
+              <Image alt={text} src={photo.url_q} width={photo.width_q} height={photo.height_q} />
+              <Card.Body>
+                <Button size='sm' variant='primary' onClick={() => { setSelectedPhotos([...selectedPhotos, photo.url_q]) }}>Add</Button>
+              </Card.Body>
+            </Card>
+              )
         ))}
       </div>
     </>

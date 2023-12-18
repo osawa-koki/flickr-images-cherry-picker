@@ -25,7 +25,7 @@ export const PhotosContext = createContext({
   getGroups: () => [] as string[],
   createGroup: (_group: string) => {},
   getPhotos: (_group: string) => [] as string[],
-  insertPhoto: (_group: string, _photo: string) => {}
+  savePhotos: (_group: string, _photos: string[]) => {}
 })
 
 function App ({ user, signOut, Component }: WithAuthenticatorProps & { pageProps: any, Component: NextComponentType<NextPageContext, any, any> }): React.JSX.Element {
@@ -68,13 +68,7 @@ export default function MyApp ({ Component, pageProps, router }: AppProps): Reac
     return photos
   }
 
-  const insertPhoto = (group: string, photo: string): void => {
-    const photosText = localStorage.getItem(getLocalStorageKey(group))
-    if (photosText == null) {
-      throw new Error("group doesn't exist")
-    }
-    const photos = JSON.parse(photosText)
-    photos.push(photo)
+  const savePhotos = (group: string, photos: string[]): void => {
     localStorage.setItem(getLocalStorageKey(group), JSON.stringify(photos))
   }
 
@@ -95,10 +89,10 @@ export default function MyApp ({ Component, pageProps, router }: AppProps): Reac
       </Head>
       <Layout>
         <PhotosContext.Provider value={{
-          getGroups: getGroups,
-          createGroup: createGroup,
+          getGroups,
+          createGroup,
           getPhotos,
-          insertPhoto
+          savePhotos
         }}>
           {withAuthenticator(App)({ Component, pageProps })}
         </PhotosContext.Provider>
