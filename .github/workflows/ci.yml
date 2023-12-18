@@ -39,5 +39,7 @@ jobs:
         run: yarn type-check
       - name: Linter check
         run: yarn lint
+      - name: Create `.env.local`
+        run: mv ./.env.local.example ./.env.local
       - name: test build
         run: yarn build
