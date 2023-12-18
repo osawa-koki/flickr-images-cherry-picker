@@ -52,7 +52,7 @@ export default function SearchPage (): React.JSX.Element {
 
   const search = (): void => {
     setIsLoading(true)
-    if (text === '' || perPage === '') {
+    if (group === '' || text === '' || perPage === '') {
       setPhotos([])
       setIsLoading(false)
       return
