@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Image from 'next/image'
-import { Form } from 'react-bootstrap'
+import { Button, Form } from 'react-bootstrap'
 import { FaRegTrashAlt } from 'react-icons/fa'
+import JSZip from 'jszip'
 import { PhotosContext } from './_app'
 
 export default function GalleryPage (): React.JSX.Element {
@@ -9,6 +10,25 @@ export default function GalleryPage (): React.JSX.Element {
 
   const [group, setGroup] = useState('')
   const [photos, setPhotos] = useState<string[]>([])
+
+  const generateZip = async (): Promise<void> => {
+    const zip = new JSZip()
+
+    const promises = photos.sort((a, b) => a.localeCompare(b)).map(async (photo, index) => {
+      const blob = await fetch(photo).then(async (res) => await res.blob())
+      const indexStr = index.toString().padStart(photos.length.toString().length, '0')
+      zip.file(`${indexStr}.jpg`, blob)
+    })
+    await Promise.all(promises)
+
+    const blob = await zip.generateAsync({ type: 'blob' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `${group}.zip`)
+    document.body.appendChild(link)
+    link.click()
+  }
 
   useEffect(() => {
     setPhotos(getPhotos(group))
@@ -31,6 +51,9 @@ export default function GalleryPage (): React.JSX.Element {
           ))}
         </Form.Control>
       </Form.Group>
+      <hr />
+      {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+      <Button variant='primary' onClick={generateZip}>Download</Button>
       <hr />
       <div className='d-flex flex-wrap'>
         {photos.map((photo) => (
