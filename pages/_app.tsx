@@ -21,14 +21,17 @@ export const PhotosContext = createContext({
 })
 
 const getLocalStorageKey = (group: string): string => `_group:${group}`
+const isNotClient = typeof window === 'undefined'
 
 export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.Element {
   const getGroups = (): string[] => {
+    if (isNotClient) return []
     const groups = Object.keys(localStorage)
     return groups.filter((group) => group.startsWith('_group:')).map((group) => group.replace(/^_group:/, ''))
   }
 
   const createGroup = (group: string): void => {
+    if (isNotClient) return
     if (localStorage.getItem(getLocalStorageKey(group)) != null) {
       return
     }
@@ -36,6 +39,7 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
   }
 
   const getPhotos = (group: string): string[] => {
+    if (isNotClient) return []
     const photosText = localStorage.getItem(getLocalStorageKey(group))
     if (photosText == null) {
       return []
@@ -45,6 +49,7 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
   }
 
   const savePhotos = (group: string, photos: string[]): void => {
+    if (isNotClient) return
     if (group === '') {
       return
     }
