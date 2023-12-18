@@ -69,6 +69,9 @@ export default function MyApp ({ Component, pageProps, router }: AppProps): Reac
   }
 
   const savePhotos = (group: string, photos: string[]): void => {
+    if (group === '') {
+      return
+    }
     localStorage.setItem(getLocalStorageKey(group), JSON.stringify(photos))
   }
 

@@ -5,7 +5,7 @@ import { FaRegTrashAlt } from 'react-icons/fa'
 import { PhotosContext } from './_app'
 
 export default function GalleryPage (): React.JSX.Element {
-  const { getGroups, getPhotos } = useContext(PhotosContext)
+  const { getGroups, getPhotos, savePhotos } = useContext(PhotosContext)
 
   const [group, setGroup] = useState('')
   const [photos, setPhotos] = useState<string[]>([])
@@ -13,6 +13,10 @@ export default function GalleryPage (): React.JSX.Element {
   useEffect(() => {
     setPhotos(getPhotos(group))
   }, [group])
+
+  useEffect(() => {
+    savePhotos(group, photos)
+  }, [photos])
 
   return (
     <>
