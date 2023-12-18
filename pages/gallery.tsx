@@ -32,7 +32,7 @@ export default function FlickrPage (): React.JSX.Element {
 
   const [group, setGroup] = useState('')
   const [text, setText] = useState('')
-  const [perPage, _setPerPage] = useState('500')
+  const [perPage, _setPerPage] = useState('100')
   const setPerPage = (value: string): void => {
     if (value === '') {
       _setPerPage('')
