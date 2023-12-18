@@ -11,10 +11,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+      - name : Setup Amplify
+        run: yarn global add @aws-amplify/cli
       - name: Cache node_modules
         id: node_modules_cache_id
         uses: actions/cache@v3
@@ -24,6 +31,8 @@ jobs:
       - name: Install dependencies
         if: steps.node_modules_cache_id.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile --non-interactive
+      - name: Setup Amplify env
+        run: amplify pull --appId ${{ secrets.AMPLIFY_APP_ID }} --envName dev --yes
       - name: Run test
         run: yarn test
       - name: Type check
