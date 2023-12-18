@@ -10,7 +10,6 @@ import { type AppProps } from 'next/app'
 import Head from 'next/head'
 
 import { Amplify } from 'aws-amplify'
-import { generateClient } from 'aws-amplify/api'
 import { type WithAuthenticatorProps, withAuthenticator } from '@aws-amplify/ui-react'
 
 import { Alert } from 'react-bootstrap'
@@ -21,7 +20,6 @@ import Layout from '../components/Layout'
 import awsconfig from '../src/aws-exports'
 
 Amplify.configure(awsconfig)
-export const graphqlClient = generateClient()
 
 function App ({ user, signOut, Component }: WithAuthenticatorProps & { pageProps: any, Component: NextComponentType<NextPageContext, any, any> }): React.JSX.Element {
   if (user == null) {
