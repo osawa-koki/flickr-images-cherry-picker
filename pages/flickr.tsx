@@ -70,8 +70,8 @@ export default function FlickrPage (): React.JSX.Element {
   return (
     <>
       <Form.Group className='mt-3' controlId='formControlText'>
-        <Form.Label>Text</Form.Label>
-        <Form.Control type='text' placeholder='Enter text' value={text} onChange={(e) => { setText(e.target.value) }} />
+        <Form.Label>Search Text</Form.Label>
+        <Form.Control type='text' placeholder='Enter search text' value={text} onChange={(e) => { setText(e.target.value) }} />
       </Form.Group>
       <Form.Group className='mt-3' controlId='formControlPerPage'>
         <Form.Label>Per Page</Form.Label>
