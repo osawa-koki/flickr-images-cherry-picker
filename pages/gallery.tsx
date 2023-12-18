@@ -72,8 +72,8 @@ export default function FlickrPage (): React.JSX.Element {
   }
 
   const active = useMemo(() => {
-    return text !== '' && perPage !== ''
-  }, [text, perPage])
+    return group !== '' && text !== '' && perPage !== ''
+  }, [group, text, perPage])
 
   useEffect(() => {
     setPhotos([])
