@@ -20,10 +20,12 @@ module.exports = {
   ],
   ignorePatterns: [
     '.next',
+    'amplify',
     'build',
-    'dist',
     'next-env.d.ts',
-    'node_modules'
+    'node_modules',
+    'out',
+    'src'
   ],
   rules: {}
 }
