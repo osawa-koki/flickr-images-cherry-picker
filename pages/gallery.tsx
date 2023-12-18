@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import Image from 'next/image'
 import { Button, Form } from 'react-bootstrap'
 import { FaRegTrashAlt } from 'react-icons/fa'
@@ -38,6 +38,10 @@ export default function GalleryPage (): React.JSX.Element {
     savePhotos(group, photos)
   }, [photos])
 
+  const active = useMemo(() => {
+    return group !== '' && photos.length > 0
+  }, [group, photos])
+
   return (
     <>
       <Form.Group controlId='formControlGroup'>
@@ -53,7 +57,7 @@ export default function GalleryPage (): React.JSX.Element {
       </Form.Group>
       <hr />
       {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-      <Button variant='primary' onClick={generateZip}>Download</Button>
+      <Button variant='primary' onClick={generateZip} disabled={!active}>Download</Button>
       <hr />
       <div className='d-flex flex-wrap'>
         {photos.map((photo) => (
