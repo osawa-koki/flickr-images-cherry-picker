@@ -17,8 +17,8 @@ export default function GalleryPage (): React.JSX.Element {
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const [flip, setFlip] = useState(false)
-  const [rotate, setRotate] = useState(false)
+  const [flip, setFlip] = useState(true)
+  const [rotate, setRotate] = useState(true)
   const [rotateFrom, setRotateFrom] = useState(-20)
   const [rotateTo, setRotateTo] = useState(20)
   const [rotateCount, setRotateCount] = useState(5)
