@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
-import Image from 'next/image'
 import { Button, Form } from 'react-bootstrap'
-import { FaRegTrashAlt } from 'react-icons/fa'
-import JSZip from 'jszip'
 import { PhotosContext } from './_app'
-import imageFlipper from '../src/imageFlipper'
-import imageRotater from '../src/imageRotater'
+import DownloadSetting from '../components/DownloadSetting'
+import PhotosGallery from '../components/PhotosGallery'
+import generateZip from '../src/generateZip'
+import execDownload from '../src/execDownload'
 
 export default function GalleryPage (): React.JSX.Element {
   const { getGroups, getPhotos, savePhotos } = useContext(PhotosContext)
@@ -25,37 +24,18 @@ export default function GalleryPage (): React.JSX.Element {
   const [rotateTo, setRotateTo] = useState(20)
   const [rotateCount, setRotateCount] = useState(5)
 
-  const generateZip = async (): Promise<void> => {
+  const downloadZip = async (): Promise<void> => {
     setIsLoading(true)
 
-    const zip = new JSZip()
-
-    const promises = photos.sort((a, b) => a.localeCompare(b)).map(async (photo, index) => {
-      const blob = await fetch(photo).then(async (res) => await res.blob())
-      const indexStr = index.toString().padStart(photos.length.toString().length, '0')
-      zip.file(`${indexStr}.jpg`, blob)
-
-      if (flip) {
-        const flippedBlob = await imageFlipper(blob)
-        zip.file(`${indexStr}-flipped.jpg`, flippedBlob)
-      }
-
-      if (rotate) {
-        const ratetedBlobs = await imageRotater(blob, rotateFrom, rotateTo, rotateCount)
-        ratetedBlobs.forEach((blob, i) => {
-          zip.file(`${indexStr}-rotated-${i}.jpg`, blob)
-        })
-      }
+    const blob = await generateZip({
+      photos,
+      flip,
+      rotate,
+      rotateFrom,
+      rotateTo,
+      rotateCount
     })
-    await Promise.all(promises)
-
-    const blob = await zip.generateAsync({ type: 'blob' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', `${group}.zip`)
-    document.body.appendChild(link)
-    link.click()
+    execDownload(blob, `${group}.zip`)
 
     setIsLoading(false)
   }
@@ -87,52 +67,24 @@ export default function GalleryPage (): React.JSX.Element {
       </Form.Group>
       <hr />
       {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-      <Button variant='primary' onClick={generateZip} disabled={!active || isLoading}>Download</Button>
-      <div className='my-3 p-3 bg-light'>
-        <Form.Group controlId='formControlFlip'>
-          <Form.Check type='checkbox' label='Flip' checked={flip} onChange={(event) => {
-            setFlip(event.target.checked)
-          }} />
-        </Form.Group>
-        <Form.Group controlId='formControlRotate'>
-          <Form.Check type='checkbox' label='Rotate' checked={rotate} onChange={(event) => {
-            setRotate(event.target.checked)
-          }} />
-        </Form.Group>
-        {rotate && (
-          <>
-            <Form.Group controlId='formControlRotateFrom'>
-              <Form.Label>From</Form.Label>
-              <Form.Control type='number' placeholder='From' value={rotateFrom} onChange={(event) => {
-                setRotateFrom(parseInt(event.target.value))
-              }} />
-            </Form.Group>
-            <Form.Group controlId='formControlRotateTo'>
-              <Form.Label>To</Form.Label>
-              <Form.Control type='number' placeholder='To' value={rotateTo} onChange={(event) => {
-                setRotateTo(parseInt(event.target.value))
-              }} />
-            </Form.Group>
-            <Form.Group controlId='formControlRotateCount'>
-              <Form.Label>Count</Form.Label>
-              <Form.Control type='number' placeholder='Count' value={rotateCount} onChange={(event) => {
-                setRotateCount(parseInt(event.target.value))
-              }} />
-            </Form.Group>
-          </>
-        )}
-      </div>
+      <Button variant='primary' onClick={downloadZip} disabled={!active || isLoading}>Download</Button>
+      <DownloadSetting
+        flip={flip}
+        rotate={rotate}
+        rotateFrom={rotateFrom}
+        rotateTo={rotateTo}
+        rotateCount={rotateCount}
+        setFlip={setFlip}
+        setRotate={setRotate}
+        setRotateFrom={setRotateFrom}
+        setRotateTo={setRotateTo}
+        setRotateCount={setRotateCount}
+      />
       <hr />
-      <div className='d-flex flex-wrap'>
-        {photos.map((photo) => (
-          <div key={photo} className='position-relative d-block' style={{ width: '150px', height: '150px' }}>
-            <Image alt='image' src={photo} width={150} height={150} className='position-absolute top-0 start-0 bottom-0 end-0' />
-            <FaRegTrashAlt role='button' className='position-absolute text-danger top-0 end-0' onClick={() => {
-              setPhotos(photos.filter((p) => p !== photo))
-            }} />
-          </div>
-        ))}
-      </div>
+      <PhotosGallery
+        photos={photos}
+        setPhotos={setPhotos}
+      />
     </>
   )
 }
