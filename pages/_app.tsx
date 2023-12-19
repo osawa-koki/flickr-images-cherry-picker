@@ -1,4 +1,4 @@
-import React, { createContext } from 'react'
+import React, { createContext, useEffect, useState } from 'react'
 import { type AppProps } from 'next/app'
 import Head from 'next/head'
 
@@ -12,48 +12,53 @@ import '../styles/menu.scss'
 
 import setting from '../setting'
 import Layout from '../components/Layout'
+import { Spinner } from 'react-bootstrap'
 
 export const PhotosContext = createContext({
-  getGroups: () => [] as string[],
-  createGroup: (_group: string) => {},
-  getPhotos: (_group: string) => [] as string[],
-  savePhotos: (_group: string, _photos: string[]) => {}
+  currentGroup: '',
+  setCurrentGroup: (_group: string) => {},
+  savedGroups: [] as string[],
+  setSavedGroups: (_groups: string[]) => {},
+  savedPhotos: [] as string[],
+  setSavedPhotos: (_photos: string[]) => {}
 })
 
-const getLocalStorageKey = (group: string): string => `_group:${group}`
-const isNotClient = typeof window === 'undefined'
+const localStorageKeyPrefix = '_group:'
+const getLocalStorageKey = (group: string): string => `${localStorageKeyPrefix}${group}`
 
 export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.Element {
-  const getGroups = (): string[] => {
-    if (isNotClient) return []
-    const groups = Object.keys(localStorage)
-    return groups.filter((group) => group.startsWith('_group:')).map((group) => group.replace(/^_group:/, ''))
+  const [currentGroup, setCurrentGroup] = useState<string>('')
+  const [savedGroups, _setSavedGroups] = useState<string[] | null>(null)
+  const setSavedGroups = (groups: string[]): void => {
+    _setSavedGroups([...new Set(groups.filter((group) => group !== '').sort())])
   }
+  const [savedPhotos, setSavedPhotos] = useState<string[]>([])
 
-  const createGroup = (group: string): void => {
-    if (isNotClient) return
-    if (localStorage.getItem(getLocalStorageKey(group)) != null) {
+  useEffect(() => {
+    const groups = Object.keys(localStorage).filter((key) => {
+      return key.startsWith(localStorageKeyPrefix)
+    }).map((key) => {
+      return key.replace(localStorageKeyPrefix, '')
+    })
+    setSavedGroups(groups)
+  }, [])
+
+  useEffect(() => {
+    const photos = localStorage.getItem(getLocalStorageKey(currentGroup))
+    if (photos == null) {
+      setSavedPhotos([])
       return
     }
-    localStorage.setItem(getLocalStorageKey(group), JSON.stringify([]))
-  }
+    setSavedPhotos(JSON.parse(photos))
+  }, [currentGroup])
 
-  const getPhotos = (group: string): string[] => {
-    if (isNotClient) return []
-    const photosText = localStorage.getItem(getLocalStorageKey(group))
-    if (photosText == null) {
-      return []
-    }
-    const photos = JSON.parse(photosText)
-    return photos
-  }
+  useEffect(() => {
+    const sortedSavedPhotos = savedPhotos.sort()
+    localStorage.setItem(getLocalStorageKey(currentGroup), JSON.stringify(sortedSavedPhotos))
+  }, [savedPhotos])
 
-  const savePhotos = (group: string, photos: string[]): void => {
-    if (isNotClient) return
-    if (group === '') {
-      return
-    }
-    localStorage.setItem(getLocalStorageKey(group), JSON.stringify(photos))
+  if (savedGroups == null) {
+    return <Spinner animation='border' />
   }
 
   return (
@@ -70,10 +75,12 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
       </Head>
       <Layout>
       <PhotosContext.Provider value={{
-        getGroups,
-        createGroup,
-        getPhotos,
-        savePhotos
+        currentGroup,
+        setCurrentGroup,
+        savedGroups,
+        setSavedGroups,
+        savedPhotos,
+        setSavedPhotos
       }}>
         <Component {...pageProps} />
       </PhotosContext.Provider>
