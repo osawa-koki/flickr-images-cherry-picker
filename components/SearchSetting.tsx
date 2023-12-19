@@ -15,7 +15,7 @@ export default function SearchSetting (props: Props): React.JSX.Element {
 
   return (
     <>
-      <Form.Group className='mt-3' controlId='formControlText'>
+      <Form.Group className='mt-3' controlId='formControl Group'>
         <Form.Label>Group</Form.Label>
         <Form.Control type='text' placeholder='Enter group' value={group} onChange={(e) => { setGroup(e.target.value) }} />
       </Form.Group>
