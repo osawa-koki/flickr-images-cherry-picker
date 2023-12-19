@@ -6,6 +6,7 @@ import JSZip from 'jszip'
 import { PhotosContext } from './_app'
 import imageFlipper from '../src/imageFlipper'
 import imageRotater from '../src/imageRotater'
+import DownloadSetting from '../components/DownloadSetting'
 
 export default function GalleryPage (): React.JSX.Element {
   const { getGroups, getPhotos, savePhotos } = useContext(PhotosContext)
@@ -88,40 +89,18 @@ export default function GalleryPage (): React.JSX.Element {
       <hr />
       {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
       <Button variant='primary' onClick={generateZip} disabled={!active || isLoading}>Download</Button>
-      <div className='my-3 p-3 bg-light'>
-        <Form.Group controlId='formControlFlip'>
-          <Form.Check type='checkbox' label='Flip' checked={flip} onChange={(event) => {
-            setFlip(event.target.checked)
-          }} />
-        </Form.Group>
-        <Form.Group controlId='formControlRotate'>
-          <Form.Check type='checkbox' label='Rotate' checked={rotate} onChange={(event) => {
-            setRotate(event.target.checked)
-          }} />
-        </Form.Group>
-        {rotate && (
-          <>
-            <Form.Group controlId='formControlRotateFrom'>
-              <Form.Label>From</Form.Label>
-              <Form.Control type='number' placeholder='From' value={rotateFrom} onChange={(event) => {
-                setRotateFrom(parseInt(event.target.value))
-              }} />
-            </Form.Group>
-            <Form.Group controlId='formControlRotateTo'>
-              <Form.Label>To</Form.Label>
-              <Form.Control type='number' placeholder='To' value={rotateTo} onChange={(event) => {
-                setRotateTo(parseInt(event.target.value))
-              }} />
-            </Form.Group>
-            <Form.Group controlId='formControlRotateCount'>
-              <Form.Label>Count</Form.Label>
-              <Form.Control type='number' placeholder='Count' value={rotateCount} onChange={(event) => {
-                setRotateCount(parseInt(event.target.value))
-              }} />
-            </Form.Group>
-          </>
-        )}
-      </div>
+      <DownloadSetting
+        flip={flip}
+        rotate={rotate}
+        rotateFrom={rotateFrom}
+        rotateTo={rotateTo}
+        rotateCount={rotateCount}
+        setFlip={setFlip}
+        setRotate={setRotate}
+        setRotateFrom={setRotateFrom}
+        setRotateTo={setRotateTo}
+        setRotateCount={setRotateCount}
+      />
       <hr />
       <div className='d-flex flex-wrap'>
         {photos.map((photo) => (
