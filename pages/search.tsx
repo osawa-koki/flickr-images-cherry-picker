@@ -2,7 +2,7 @@
 
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { type FlickrPhotosSearchParams, createFlickr } from 'flickr-sdk'
-import { Button, Form } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 import { PhotosContext } from './_app'
 import ListedPhotos from '../components/ListedPhotos'
