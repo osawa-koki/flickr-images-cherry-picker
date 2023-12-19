@@ -30,7 +30,7 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
   const [currentGroup, setCurrentGroup] = useState<string>('')
   const [savedGroups, _setSavedGroups] = useState<string[] | null>(null)
   const setSavedGroups = (groups: string[]): void => {
-    _setSavedGroups([...new Set(groups.sort())])
+    _setSavedGroups([...new Set(groups.filter((group) => group !== '').sort())])
   }
   const [savedPhotos, setSavedPhotos] = useState<string[]>([])
 
