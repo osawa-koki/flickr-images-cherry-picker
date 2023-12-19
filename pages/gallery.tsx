@@ -1,12 +1,11 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
-import Image from 'next/image'
 import { Button, Form } from 'react-bootstrap'
-import { FaRegTrashAlt } from 'react-icons/fa'
 import JSZip from 'jszip'
 import { PhotosContext } from './_app'
 import imageFlipper from '../src/imageFlipper'
 import imageRotater from '../src/imageRotater'
 import DownloadSetting from '../components/DownloadSetting'
+import PhotosGallery from '../components/PhotosGallery'
 
 export default function GalleryPage (): React.JSX.Element {
   const { getGroups, getPhotos, savePhotos } = useContext(PhotosContext)
@@ -102,16 +101,10 @@ export default function GalleryPage (): React.JSX.Element {
         setRotateCount={setRotateCount}
       />
       <hr />
-      <div className='d-flex flex-wrap'>
-        {photos.map((photo) => (
-          <div key={photo} className='position-relative d-block' style={{ width: '150px', height: '150px' }}>
-            <Image alt='image' src={photo} width={150} height={150} className='position-absolute top-0 start-0 bottom-0 end-0' />
-            <FaRegTrashAlt role='button' className='position-absolute text-danger top-0 end-0' onClick={() => {
-              setPhotos(photos.filter((p) => p !== photo))
-            }} />
-          </div>
-        ))}
-      </div>
+      <PhotosGallery
+        photos={photos}
+        setPhotos={setPhotos}
+      />
     </>
   )
 }
