@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Form } from 'react-bootstrap'
-import JSZip from 'jszip'
 import { PhotosContext } from './_app'
-import imageFlipper from '../src/imageFlipper'
-import imageRotater from '../src/imageRotater'
 import DownloadSetting from '../components/DownloadSetting'
 import PhotosGallery from '../components/PhotosGallery'
+import generateZip from '../src/generateZip'
+import execDownload from '../src/execDownload'
 
 export default function GalleryPage (): React.JSX.Element {
   const { getGroups, getPhotos, savePhotos } = useContext(PhotosContext)
@@ -25,37 +24,18 @@ export default function GalleryPage (): React.JSX.Element {
   const [rotateTo, setRotateTo] = useState(20)
   const [rotateCount, setRotateCount] = useState(5)
 
-  const generateZip = async (): Promise<void> => {
+  const downloadZip = async (): Promise<void> => {
     setIsLoading(true)
 
-    const zip = new JSZip()
-
-    const promises = photos.sort((a, b) => a.localeCompare(b)).map(async (photo, index) => {
-      const blob = await fetch(photo).then(async (res) => await res.blob())
-      const indexStr = index.toString().padStart(photos.length.toString().length, '0')
-      zip.file(`${indexStr}.jpg`, blob)
-
-      if (flip) {
-        const flippedBlob = await imageFlipper(blob)
-        zip.file(`${indexStr}-flipped.jpg`, flippedBlob)
-      }
-
-      if (rotate) {
-        const ratetedBlobs = await imageRotater(blob, rotateFrom, rotateTo, rotateCount)
-        ratetedBlobs.forEach((blob, i) => {
-          zip.file(`${indexStr}-rotated-${i}.jpg`, blob)
-        })
-      }
+    const blob = await generateZip({
+      photos,
+      flip,
+      rotate,
+      rotateFrom,
+      rotateTo,
+      rotateCount
     })
-    await Promise.all(promises)
-
-    const blob = await zip.generateAsync({ type: 'blob' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', `${group}.zip`)
-    document.body.appendChild(link)
-    link.click()
+    execDownload(blob, `${group}.zip`)
 
     setIsLoading(false)
   }
@@ -87,7 +67,7 @@ export default function GalleryPage (): React.JSX.Element {
       </Form.Group>
       <hr />
       {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-      <Button variant='primary' onClick={generateZip} disabled={!active || isLoading}>Download</Button>
+      <Button variant='primary' onClick={downloadZip} disabled={!active || isLoading}>Download</Button>
       <DownloadSetting
         flip={flip}
         rotate={rotate}
