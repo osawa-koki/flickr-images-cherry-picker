@@ -6,6 +6,7 @@ import { Button, Form } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 import { PhotosContext } from './_app'
 import ListedPhotos from '../components/ListedPhotos'
+import SearchSetting from '../components/SearchSetting'
 
 const flickr = createFlickr(process.env.NEXT_PUBLIC_FLICKR_API_KEY!)
 
@@ -82,19 +83,14 @@ export default function SearchPage (): React.JSX.Element {
 
   return (
     <>
-      <Form.Group className='mt-3' controlId='formControlText'>
-        <Form.Label>Group</Form.Label>
-        <Form.Control type='text' placeholder='Enter group' value={group} onChange={(e) => { setGroup(e.target.value) }} />
-      </Form.Group>
-      <Form.Group className='mt-3' controlId='formControlText'>
-        <Form.Label>Search Text</Form.Label>
-        <Form.Control type='text' placeholder='Enter search text' value={text} onChange={(e) => { setText(e.target.value) }} />
-      </Form.Group>
-      <Form.Group className='mt-3' controlId='formControlPerPage'>
-        <Form.Label>Per Page</Form.Label>
-        <Form.Control type='text' placeholder='Enter per page' value={perPage} onChange={(e) => { setPerPage(e.target.value) }} />
-        <hr />
-      </Form.Group>
+      <SearchSetting
+        group={group}
+        text={text}
+        perPage={perPage}
+        setGroup={setGroup}
+        setText={setText}
+        setPerPage={setPerPage}
+      />
       <Button variant='primary' onClick={search} disabled={isLoading || !active}>Search</Button>
       <hr />
       <ListedPhotos
