@@ -51,7 +51,7 @@ export default function GalleryPage (): React.JSX.Element {
     <>
       <Form.Group controlId='formControlGroup'>
         <Form.Label>Group</Form.Label>
-        <Form.Control as='select' onChange={(event) => {
+        <Form.Control as='select' value={currentGroup} onChange={(event) => {
           setCurrentGroup(event.target.value)
         }}>
           <option value=''>Select a group</option>
