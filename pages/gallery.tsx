@@ -4,6 +4,7 @@ import { Button, Form } from 'react-bootstrap'
 import { FaRegTrashAlt } from 'react-icons/fa'
 import JSZip from 'jszip'
 import { PhotosContext } from './_app'
+import imageFlipper from '../src/imageFlipper'
 
 export default function GalleryPage (): React.JSX.Element {
   const { getGroups, getPhotos, savePhotos } = useContext(PhotosContext)
@@ -18,6 +19,9 @@ export default function GalleryPage (): React.JSX.Element {
       const blob = await fetch(photo).then(async (res) => await res.blob())
       const indexStr = index.toString().padStart(photos.length.toString().length, '0')
       zip.file(`${indexStr}.jpg`, blob)
+
+      const flippedBlob = await imageFlipper(blob)
+      zip.file(`${indexStr}-flipped.jpg`, flippedBlob)
     })
     await Promise.all(promises)
 
