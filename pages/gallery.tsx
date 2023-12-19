@@ -5,6 +5,7 @@ import { FaRegTrashAlt } from 'react-icons/fa'
 import JSZip from 'jszip'
 import { PhotosContext } from './_app'
 import imageFlipper from '../src/imageFlipper'
+import imageRotater from '../src/imageRotater'
 
 export default function GalleryPage (): React.JSX.Element {
   const { getGroups, getPhotos, savePhotos } = useContext(PhotosContext)
@@ -22,6 +23,11 @@ export default function GalleryPage (): React.JSX.Element {
 
       const flippedBlob = await imageFlipper(blob)
       zip.file(`${indexStr}-flipped.jpg`, flippedBlob)
+
+      const ratetedBlobs = await imageRotater(blob, -20, 20, 5)
+      ratetedBlobs.forEach((blob, i) => {
+        zip.file(`${indexStr}-rotated-${i}.jpg`, blob)
+      })
     })
     await Promise.all(promises)
 
