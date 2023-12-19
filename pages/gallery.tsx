@@ -73,7 +73,7 @@ export default function GalleryPage (): React.JSX.Element {
       </Form.Group>
       <hr />
       {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-      <Button variant='primary' onClick={generateZip} disabled={!active}>Download</Button>
+      <Button variant='primary' onClick={generateZip} disabled={!active || isLoading}>Download</Button>
       <hr />
       <div className='d-flex flex-wrap'>
         {photos.map((photo) => (
