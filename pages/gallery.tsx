@@ -7,16 +7,15 @@ import generateZip from '../src/generateZip'
 import execDownload from '../src/execDownload'
 
 export default function GalleryPage (): React.JSX.Element {
-  const { getGroups, getPhotos, savePhotos } = useContext(PhotosContext)
-
-  const groups = useMemo(() => {
-    return getGroups()
-  }, [])
+  const {
+    currentGroup,
+    setCurrentGroup,
+    savedGroups,
+    savedPhotos,
+    setSavedPhotos
+  } = useContext(PhotosContext)
 
   const [isLoading, setIsLoading] = useState(false)
-
-  const [group, setGroup] = useState('')
-  const [photos, setPhotos] = useState<string[]>([])
 
   const [flip, setFlip] = useState(false)
   const [rotate, setRotate] = useState(false)
@@ -28,39 +27,35 @@ export default function GalleryPage (): React.JSX.Element {
     setIsLoading(true)
 
     const blob = await generateZip({
-      photos,
+      photos: savedPhotos,
       flip,
       rotate,
       rotateFrom,
       rotateTo,
       rotateCount
     })
-    execDownload(blob, `${group}.zip`)
+    execDownload(blob, `${currentGroup}.zip`)
 
     setIsLoading(false)
   }
 
   useEffect(() => {
-    setPhotos(getPhotos(group))
-  }, [group])
-
-  useEffect(() => {
-    savePhotos(group, photos)
-  }, [photos])
+    setSavedPhotos(savedPhotos)
+  }, [currentGroup])
 
   const active = useMemo(() => {
-    return group !== '' && photos.length > 0
-  }, [group, photos])
+    return currentGroup !== '' && savedPhotos.length > 0
+  }, [currentGroup, savedPhotos])
 
   return (
     <>
       <Form.Group controlId='formControlGroup'>
         <Form.Label>Group</Form.Label>
         <Form.Control as='select' onChange={(event) => {
-          setGroup(event.target.value)
+          setCurrentGroup(event.target.value)
         }}>
           <option value=''>Select a group</option>
-          {groups.map((group) => (
+          {savedGroups.map((group) => (
             <option key={group}>{group}</option>
           ))}
         </Form.Control>
@@ -82,8 +77,8 @@ export default function GalleryPage (): React.JSX.Element {
       />
       <hr />
       <PhotosGallery
-        photos={photos}
-        setPhotos={setPhotos}
+        photos={savedPhotos}
+        setPhotos={setSavedPhotos}
       />
     </>
   )

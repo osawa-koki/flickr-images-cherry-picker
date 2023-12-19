@@ -19,9 +19,11 @@ const baseFlickrPhotosSearchParams: FlickrPhotosSearchParams = {
 
 export default function SearchPage (): React.JSX.Element {
   const {
-    createGroup,
-    getPhotos,
-    savePhotos
+    setCurrentGroup,
+    savedGroups,
+    setSavedGroups,
+    savedPhotos,
+    setSavedPhotos
   } = useContext(PhotosContext)
 
   const [isLoading, setIsLoading] = useState(false)
@@ -42,7 +44,6 @@ export default function SearchPage (): React.JSX.Element {
   }
 
   const [photos, setPhotos] = useState<FlickrPhoto[]>([])
-  const [selectedPhotos, setSelectedPhotos] = useState<string[]>([])
 
   const search = (): void => {
     setIsLoading(true)
@@ -51,8 +52,8 @@ export default function SearchPage (): React.JSX.Element {
       setIsLoading(false)
       return
     }
-    createGroup(group)
-    setSelectedPhotos(getPhotos(group))
+    setCurrentGroup(group)
+    setSavedGroups([...savedGroups, group])
     flickr.flickr('flickr.photos.search', {
       ...baseFlickrPhotosSearchParams,
       text,
@@ -77,10 +78,6 @@ export default function SearchPage (): React.JSX.Element {
     setPhotos([])
   }, [group])
 
-  useEffect(() => {
-    savePhotos(group, selectedPhotos)
-  }, [selectedPhotos])
-
   return (
     <>
       <SearchSetting
@@ -95,8 +92,8 @@ export default function SearchPage (): React.JSX.Element {
       <hr />
       <ListedPhotos
         photos={photos}
-        selectedPhotos={selectedPhotos}
-        setSelectedPhotos={setSelectedPhotos}
+        selectedPhotos={savedPhotos}
+        setSelectedPhotos={setSavedPhotos}
       />
     </>
   )
