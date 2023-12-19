@@ -10,10 +10,20 @@ import imageRotater from '../src/imageRotater'
 export default function GalleryPage (): React.JSX.Element {
   const { getGroups, getPhotos, savePhotos } = useContext(PhotosContext)
 
+  const groups = useMemo(() => {
+    return getGroups()
+  }, [])
+
   const [isLoading, setIsLoading] = useState(false)
 
   const [group, setGroup] = useState('')
   const [photos, setPhotos] = useState<string[]>([])
+
+  const [flip, setFlip] = useState(false)
+  const [rotate, setRotate] = useState(false)
+  const [rotateFrom, setRotateFrom] = useState(-20)
+  const [rotateTo, setRotateTo] = useState(20)
+  const [rotateCount, setRotateCount] = useState(5)
 
   const generateZip = async (): Promise<void> => {
     setIsLoading(true)
@@ -25,13 +35,17 @@ export default function GalleryPage (): React.JSX.Element {
       const indexStr = index.toString().padStart(photos.length.toString().length, '0')
       zip.file(`${indexStr}.jpg`, blob)
 
-      const flippedBlob = await imageFlipper(blob)
-      zip.file(`${indexStr}-flipped.jpg`, flippedBlob)
+      if (flip) {
+        const flippedBlob = await imageFlipper(blob)
+        zip.file(`${indexStr}-flipped.jpg`, flippedBlob)
+      }
 
-      const ratetedBlobs = await imageRotater(blob, -20, 20, 5)
-      ratetedBlobs.forEach((blob, i) => {
-        zip.file(`${indexStr}-rotated-${i}.jpg`, blob)
-      })
+      if (rotate) {
+        const ratetedBlobs = await imageRotater(blob, rotateFrom, rotateTo, rotateCount)
+        ratetedBlobs.forEach((blob, i) => {
+          zip.file(`${indexStr}-rotated-${i}.jpg`, blob)
+        })
+      }
     })
     await Promise.all(promises)
 
@@ -66,7 +80,7 @@ export default function GalleryPage (): React.JSX.Element {
           setGroup(event.target.value)
         }}>
           <option value=''>Select a group</option>
-          {getGroups().map((group) => (
+          {groups.map((group) => (
             <option key={group}>{group}</option>
           ))}
         </Form.Control>
@@ -74,6 +88,40 @@ export default function GalleryPage (): React.JSX.Element {
       <hr />
       {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
       <Button variant='primary' onClick={generateZip} disabled={!active || isLoading}>Download</Button>
+      <div className='my-3 p-3 bg-light'>
+        <Form.Group controlId='formControlFlip'>
+          <Form.Check type='checkbox' label='Flip' checked={flip} onChange={(event) => {
+            setFlip(event.target.checked)
+          }} />
+        </Form.Group>
+        <Form.Group controlId='formControlRotate'>
+          <Form.Check type='checkbox' label='Rotate' checked={rotate} onChange={(event) => {
+            setRotate(event.target.checked)
+          }} />
+        </Form.Group>
+        {rotate && (
+          <>
+            <Form.Group controlId='formControlRotateFrom'>
+              <Form.Label>From</Form.Label>
+              <Form.Control type='number' placeholder='From' value={rotateFrom} onChange={(event) => {
+                setRotateFrom(parseInt(event.target.value))
+              }} />
+            </Form.Group>
+            <Form.Group controlId='formControlRotateTo'>
+              <Form.Label>To</Form.Label>
+              <Form.Control type='number' placeholder='To' value={rotateTo} onChange={(event) => {
+                setRotateTo(parseInt(event.target.value))
+              }} />
+            </Form.Group>
+            <Form.Group controlId='formControlRotateCount'>
+              <Form.Label>Count</Form.Label>
+              <Form.Control type='number' placeholder='Count' value={rotateCount} onChange={(event) => {
+                setRotateCount(parseInt(event.target.value))
+              }} />
+            </Form.Group>
+          </>
+        )}
+      </div>
       <hr />
       <div className='d-flex flex-wrap'>
         {photos.map((photo) => (
