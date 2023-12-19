@@ -10,10 +10,14 @@ import imageRotater from '../src/imageRotater'
 export default function GalleryPage (): React.JSX.Element {
   const { getGroups, getPhotos, savePhotos } = useContext(PhotosContext)
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const [group, setGroup] = useState('')
   const [photos, setPhotos] = useState<string[]>([])
 
   const generateZip = async (): Promise<void> => {
+    setIsLoading(true)
+
     const zip = new JSZip()
 
     const promises = photos.sort((a, b) => a.localeCompare(b)).map(async (photo, index) => {
@@ -38,6 +42,8 @@ export default function GalleryPage (): React.JSX.Element {
     link.setAttribute('download', `${group}.zip`)
     document.body.appendChild(link)
     link.click()
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
