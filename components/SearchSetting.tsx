@@ -1,5 +1,9 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Form } from 'react-bootstrap'
+import CreatableSelect from 'react-select/creatable'
+import { toast } from 'react-toastify'
+import { PhotosContext } from '../pages/_app'
+import { forbiddenChars } from '../src/const'
 
 interface Props {
   group: string
@@ -11,13 +15,39 @@ interface Props {
 }
 
 export default function SearchSetting (props: Props): React.JSX.Element {
+  const { savedGroups } = useContext(PhotosContext)
+
   const { group, text, perPage, setGroup, setText, setPerPage } = props
 
   return (
     <>
       <Form.Group className='mt-3' controlId='formControlGroup'>
         <Form.Label>Group</Form.Label>
-        <Form.Control type='text' placeholder='Enter group' value={group} onChange={(e) => { setGroup(e.target.value) }} />
+        <CreatableSelect
+          options={savedGroups.map((group) => {
+            return { value: group, label: group }
+          })}
+          value={{ value: group, label: group }}
+          onChange={(value) => {
+            if (value == null) {
+              setGroup('')
+              return
+            }
+            setGroup(value.value)
+          }}
+          onCreateOption={(value) => {
+            setGroup(value)
+          }}
+          isValidNewOption={(inputValue) => {
+            if (inputValue === '') return false
+            if (savedGroups.includes(inputValue)) return false
+            if (forbiddenChars.some((char) => inputValue.includes(char))) {
+              toast.error(`Group name cannot include '${forbiddenChars.join(', ')}'.`)
+              return false
+            }
+            return true
+          }}
+        />
       </Form.Group>
       <Form.Group className='mt-3' controlId='formControlText'>
         <Form.Label>Search Text</Form.Label>
