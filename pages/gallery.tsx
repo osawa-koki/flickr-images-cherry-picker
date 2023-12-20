@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/router'
 import { Button, Form } from 'react-bootstrap'
 import { PhotosContext } from './_app'
 import DownloadSetting from '../components/DownloadSetting'
@@ -6,12 +7,16 @@ import PhotosGallery from '../components/PhotosGallery'
 import generateZip from '../src/generateZip'
 import execDownload from '../src/execDownload'
 import amplifiedPhotosCounter from '../src/amplifiedPhotosCounter'
+import { toast } from 'react-toastify'
 
 export default function GalleryPage (): React.JSX.Element {
+  const router = useRouter()
+
   const {
     currentGroup,
     setCurrentGroup,
     savedGroups,
+    setSavedGroups,
     savedPhotos,
     setSavedPhotos
   } = useContext(PhotosContext)
@@ -38,6 +43,13 @@ export default function GalleryPage (): React.JSX.Element {
     execDownload(blob, `${currentGroup}.zip`)
 
     setIsLoading(false)
+  }
+
+  const deleteGroup = async (): Promise<void> => {
+    if (!window.confirm(`Are you sure to delete group "${currentGroup}"?`)) return
+    setSavedGroups(savedGroups.filter((group) => group !== currentGroup))
+    await router.push('/search/')
+    toast.success(`Group "${currentGroup}" deleted.`)
   }
 
   useEffect(() => {
@@ -90,6 +102,9 @@ export default function GalleryPage (): React.JSX.Element {
         )}
         active={active}
       />
+      <hr />
+      {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+      {currentGroup !== '' && <Button variant='danger' onClick={deleteGroup}>Delete</Button>}
     </>
   )
 }

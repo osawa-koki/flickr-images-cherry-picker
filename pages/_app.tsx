@@ -53,6 +53,21 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
   }, [currentGroup])
 
   useEffect(() => {
+    if (savedGroups == null) return
+    const existingGroup = Object.keys(localStorage).filter((key) => {
+      return key.startsWith(localStorageKeyPrefix)
+    }).map((key) => {
+      return key.replace(localStorageKeyPrefix, '')
+    })
+    const removedGroups = existingGroup.filter((group) => {
+      return !savedGroups.includes(group)
+    })
+    removedGroups.forEach((group) => {
+      localStorage.removeItem(getLocalStorageKey(group))
+    })
+  }, [savedGroups])
+
+  useEffect(() => {
     const sortedSavedPhotos = savedPhotos.sort()
     localStorage.setItem(getLocalStorageKey(currentGroup), JSON.stringify(sortedSavedPhotos))
   }, [savedPhotos])
