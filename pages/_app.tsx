@@ -89,16 +89,17 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
         />
       </Head>
       <Layout>
-      <PhotosContext.Provider value={{
-        currentGroup,
-        setCurrentGroup,
-        savedGroups,
-        setSavedGroups,
-        savedPhotos,
-        setSavedPhotos
-      }}>
-        <Component {...pageProps} />
-      </PhotosContext.Provider>
+        <div id='Modal'></div>
+        <PhotosContext.Provider value={{
+          currentGroup,
+          setCurrentGroup,
+          savedGroups,
+          setSavedGroups,
+          savedPhotos,
+          setSavedPhotos
+        }}>
+          <Component {...pageProps} />
+        </PhotosContext.Provider>
         <ToastContainer />
       </Layout>
     </>
