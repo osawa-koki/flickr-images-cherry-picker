@@ -27,6 +27,16 @@ yarn dev
 yarn build
 ```
 
+Dockerを使って実行することもできます。  
+
+```shell
+# ビルド
+docker build -t flickr-images-cherry-picker .
+
+# 実行
+docker run --rm -d -p 80:80 --name flickr-images-cherry-picker flickr-images-cherry-picker
+```
+
 ## デプロイ方法
 
 GitHub Actionsを使って、GitHub Pagesにデプロイしています。  
