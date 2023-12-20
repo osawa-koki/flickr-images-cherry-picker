@@ -10,6 +10,7 @@ import ListedPhotos from '../components/ListedPhotos'
 import SearchSetting from '../components/SearchSetting'
 import ProgressViewer from '../components/ProgressViewer'
 import { congratsMilliSeconds } from '../src/const'
+import SearchPagination from '../components/SearchPagination'
 
 const flickr = createFlickr(process.env.NEXT_PUBLIC_FLICKR_API_KEY!)
 
@@ -34,8 +35,10 @@ export default function SearchPage (): React.JSX.Element {
 
   const [group, setGroup] = useState('')
   const [text, setText] = useState('')
-  const [perPage, _setPerPage] = useState('100')
+  const [perPage, _setPerPage] = useState('30')
   const [objectiveCount, setObjectiveCount] = useState(100)
+
+  const [page, setPage] = useState(1)
 
   const setPerPage = (value: string): void => {
     if (value === '') {
@@ -51,19 +54,12 @@ export default function SearchPage (): React.JSX.Element {
 
   const [photos, setPhotos] = useState<FlickrPhoto[]>([])
 
-  const search = (): void => {
-    setIsLoading(true)
-    if (group === '' || text === '' || perPage === '') {
-      setPhotos([])
-      setIsLoading(false)
-      return
-    }
-    setCurrentGroup(group)
-    setSavedGroups([...savedGroups, group])
+  const fetchPhotos = (): void => {
     flickr.flickr('flickr.photos.search', {
       ...baseFlickrPhotosSearchParams,
       text,
-      per_page: perPage.toString()
+      per_page: perPage.toString(),
+      page: page.toString()
     })
       .then((res) => {
         setPhotos(res.photos.photo)
@@ -75,6 +71,23 @@ export default function SearchPage (): React.JSX.Element {
         setIsLoading(false)
       })
   }
+
+  const search = (): void => {
+    setIsLoading(true)
+    if (group === '' || text === '' || perPage === '') {
+      setPhotos([])
+      setIsLoading(false)
+      return
+    }
+    setCurrentGroup(group)
+    setSavedGroups([...savedGroups, group])
+    fetchPhotos()
+  }
+
+  useEffect(() => {
+    fetchPhotos()
+    window.scrollTo(0, 0)
+  }, [page])
 
   const active = useMemo(() => {
     return group !== '' && text !== '' && perPage !== ''
@@ -118,6 +131,12 @@ export default function SearchPage (): React.JSX.Element {
         photos={photos}
         selectedPhotos={savedPhotos}
         setSelectedPhotos={setSavedPhotos}
+      />
+      <SearchPagination
+        page={page}
+        setPage={setPage}
+        perPage={Number(perPage)}
+        active={photos.length > 0}
       />
     </>
   )
