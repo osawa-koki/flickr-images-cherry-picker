@@ -67,7 +67,6 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
     })
   }, [savedGroups])
 
-
   useEffect(() => {
     const sortedSavedPhotos = savedPhotos.sort()
     localStorage.setItem(getLocalStorageKey(currentGroup), JSON.stringify(sortedSavedPhotos))
