@@ -5,6 +5,7 @@ import DownloadSetting from '../components/DownloadSetting'
 import PhotosGallery from '../components/PhotosGallery'
 import generateZip from '../src/generateZip'
 import execDownload from '../src/execDownload'
+import amplifiedPhotosCounter from '../src/amplifiedPhotosCounter'
 
 export default function GalleryPage (): React.JSX.Element {
   const {
@@ -44,8 +45,10 @@ export default function GalleryPage (): React.JSX.Element {
   }, [currentGroup])
 
   const active = useMemo(() => {
-    return currentGroup !== '' && savedPhotos.length > 0
-  }, [currentGroup, savedPhotos])
+    if (currentGroup === '' || savedPhotos.length <= 0) return false
+    if (rotate && (Number.isNaN(rotateFrom) || Number.isNaN(rotateTo) || Number.isNaN(rotateCount))) return false
+    return true
+  }, [currentGroup, savedPhotos, rotate, rotateFrom, rotateTo, rotateCount])
 
   return (
     <>
@@ -79,6 +82,13 @@ export default function GalleryPage (): React.JSX.Element {
       <PhotosGallery
         photos={savedPhotos}
         setPhotos={setSavedPhotos}
+        amplifiedPhotosCount={amplifiedPhotosCounter(
+          savedPhotos.length,
+          flip,
+          rotate,
+          rotateCount
+        )}
+        active={active}
       />
     </>
   )
