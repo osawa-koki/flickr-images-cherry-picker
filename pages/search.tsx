@@ -7,6 +7,7 @@ import { toast } from 'react-toastify'
 import { PhotosContext } from './_app'
 import ListedPhotos from '../components/ListedPhotos'
 import SearchSetting from '../components/SearchSetting'
+import ProgressViewer from '../components/ProgressViewer'
 
 const flickr = createFlickr(process.env.NEXT_PUBLIC_FLICKR_API_KEY!)
 
@@ -31,6 +32,8 @@ export default function SearchPage (): React.JSX.Element {
   const [group, setGroup] = useState('')
   const [text, setText] = useState('')
   const [perPage, _setPerPage] = useState('100')
+  const [objectiveCount, setObjectiveCount] = useState(100)
+
   const setPerPage = (value: string): void => {
     if (value === '') {
       _setPerPage('')
@@ -78,15 +81,28 @@ export default function SearchPage (): React.JSX.Element {
     setPhotos([])
   }, [group])
 
+  useEffect(() => {
+    if (objectiveCount === savedPhotos.length) {
+      toast.success('Objective count reached!')
+    }
+  }, [savedPhotos])
+
   return (
     <>
+      <ProgressViewer
+        active={photos.length > 0}
+        objectiveCount={objectiveCount}
+        selectedCount={savedPhotos.length}
+      />
       <SearchSetting
         group={group}
         text={text}
         perPage={perPage}
+        objectiveCount={objectiveCount}
         setGroup={setGroup}
         setText={setText}
         setPerPage={setPerPage}
+        setObjectiveCount={setObjectiveCount}
       />
       <Button variant='primary' onClick={search} disabled={isLoading || !active}>Search</Button>
       <hr />
