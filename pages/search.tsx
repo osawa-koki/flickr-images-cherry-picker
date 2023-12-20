@@ -85,6 +85,7 @@ export default function SearchPage (): React.JSX.Element {
   }
 
   useEffect(() => {
+    if (group === '' || text === '' || perPage === '') return
     fetchPhotos()
     window.scrollTo(0, 0)
   }, [page])
