@@ -11,6 +11,7 @@ import SearchSetting from '../components/SearchSetting'
 import ProgressViewer from '../components/ProgressViewer'
 import { congratsMilliSeconds } from '../src/const'
 import SearchPagination from '../components/SearchPagination'
+import numStrSetter from '../src/numStrSetter'
 
 const flickr = createFlickr(process.env.NEXT_PUBLIC_FLICKR_API_KEY!)
 
@@ -36,20 +37,15 @@ export default function SearchPage (): React.JSX.Element {
   const [group, setGroup] = useState('')
   const [text, setText] = useState('')
   const [perPage, _setPerPage] = useState('30')
-  const [objectiveCount, setObjectiveCount] = useState(100)
+  const [objectiveCount, _setObjectiveCount] = useState('100')
 
   const [page, setPage] = useState(1)
 
   const setPerPage = (value: string): void => {
-    if (value === '') {
-      _setPerPage('')
-      return
-    }
-    const num = Number(value)
-    if (Number.isNaN(num)) {
-      return
-    }
-    _setPerPage(num.toString())
+    numStrSetter(value, _setPerPage)
+  }
+  const setObjectiveCount = (value: string): void => {
+    numStrSetter(value, _setObjectiveCount)
   }
 
   const [photos, setPhotos] = useState<FlickrPhoto[]>([])
@@ -99,7 +95,7 @@ export default function SearchPage (): React.JSX.Element {
   }, [group])
 
   useEffect(() => {
-    if (objectiveCount === savedPhotos.length) {
+    if (Number(objectiveCount) === savedPhotos.length) {
       setCongrats(true)
       toast.success('Objective count reached!')
       setTimeout(() => {
@@ -113,7 +109,7 @@ export default function SearchPage (): React.JSX.Element {
       {congrats && <Confetti />}
       <ProgressViewer
         active={photos.length > 0}
-        objectiveCount={objectiveCount}
+        objectiveCount={Number(objectiveCount)}
         selectedCount={savedPhotos.length}
       />
       <SearchSetting

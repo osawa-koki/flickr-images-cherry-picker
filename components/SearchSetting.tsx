@@ -9,11 +9,11 @@ interface Props {
   group: string
   text: string
   perPage: string
-  objectiveCount: number
+  objectiveCount: string
   setGroup: (group: string) => void
   setText: (text: string) => void
   setPerPage: (perPage: string) => void
-  setObjectiveCount: (objectiveCount: number) => void
+  setObjectiveCount: (objectiveCount: string) => void
 }
 
 export default function SearchSetting (props: Props): React.JSX.Element {
@@ -61,7 +61,7 @@ export default function SearchSetting (props: Props): React.JSX.Element {
       </Form.Group>
       <Form.Group className='mt-3' controlId='formControlObjectiveCount'>
         <Form.Label>Objective Count</Form.Label>
-        <Form.Control type='text' placeholder='Enter objective count' value={objectiveCount} onChange={(e) => { setObjectiveCount(Number(e.target.value)) }} />
+        <Form.Control type='text' placeholder='Enter objective count' value={objectiveCount} onChange={(e) => { setObjectiveCount(e.target.value) }} />
       </Form.Group>
       <hr />
     </>
