@@ -4,10 +4,12 @@ import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { type FlickrPhotosSearchParams, createFlickr } from 'flickr-sdk'
 import { Button } from 'react-bootstrap'
 import { toast } from 'react-toastify'
+import Confetti from 'react-confetti'
 import { PhotosContext } from './_app'
 import ListedPhotos from '../components/ListedPhotos'
 import SearchSetting from '../components/SearchSetting'
 import ProgressViewer from '../components/ProgressViewer'
+import { congratsMilliSeconds } from '../src/const'
 
 const flickr = createFlickr(process.env.NEXT_PUBLIC_FLICKR_API_KEY!)
 
@@ -28,6 +30,7 @@ export default function SearchPage (): React.JSX.Element {
   } = useContext(PhotosContext)
 
   const [isLoading, setIsLoading] = useState(false)
+  const [congrats, setCongrats] = useState(false)
 
   const [group, setGroup] = useState('')
   const [text, setText] = useState('')
@@ -83,12 +86,17 @@ export default function SearchPage (): React.JSX.Element {
 
   useEffect(() => {
     if (objectiveCount === savedPhotos.length) {
+      setCongrats(true)
       toast.success('Objective count reached!')
+      setTimeout(() => {
+        setCongrats(false)
+      }, congratsMilliSeconds)
     }
   }, [savedPhotos])
 
   return (
     <>
+      {congrats && <Confetti />}
       <ProgressViewer
         active={photos.length > 0}
         objectiveCount={objectiveCount}
