@@ -7,5 +7,5 @@ export default function numStrSetter (value: string, setter: (value: React.SetSt
   if (Number.isNaN(num)) {
     return
   }
-  setter(value)
+  setter(num.toString())
 }
