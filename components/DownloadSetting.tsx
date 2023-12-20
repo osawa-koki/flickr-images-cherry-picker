@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Form } from 'react-bootstrap'
+import { BsArrowsCollapse, BsArrowsExpand } from 'react-icons/bs'
 
 interface Props {
   flip: boolean
@@ -28,9 +29,21 @@ export default function DownloadSetting (props: Props): React.JSX.Element {
     setRotateCount
   } = props
 
+  const [isOpen, setIsOpen] = useState(false)
+
+  if (!isOpen) {
+    return (
+      <div className='my-3 p-3 bg-light'>
+        <BsArrowsExpand role='button' onClick={() => { setIsOpen(true) }} />
+      </div>
+    )
+  }
+
   return (
     <>
       <div className='my-3 p-3 bg-light'>
+        <BsArrowsCollapse role='button' onClick={() => { setIsOpen(false) }} />
+        <hr />
         <Form.Group controlId='formControlFlip'>
           <Form.Check type='checkbox' label='Flip' checked={flip} onChange={(event) => {
             setFlip(event.target.checked)
