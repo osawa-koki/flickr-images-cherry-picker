@@ -5,6 +5,8 @@
 ![ロゴ](./docs/images/logo.jpeg)  
 ※ このロゴは[Bing Image Creator](https://www.bing.com)によって作成されました。  
 
+![成果物](./docs/images/fruit.gif)  
+
 ## 実行方法
 
 はじめに、FlcikrのAPIキーを取得してください。  
