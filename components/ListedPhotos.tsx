@@ -1,6 +1,6 @@
 import React from 'react'
-import Image from 'next/image'
 import { Button, Card } from 'react-bootstrap'
+import ImageCard from './ImageCard'
 
 interface Props {
   photos: FlickrPhoto[]
@@ -18,7 +18,11 @@ export default function PhotosList (props: Props): React.JSX.Element {
           selectedPhotos.includes(photo.url_q)
             ? (
             <Card key={photo.url_q} className='m-2' style={{ width: `${photo.width_q}px` }}>
-              <Image alt='image' src={photo.url_q} width={photo.width_q} height={photo.height_q} />
+              <ImageCard
+                src={photo.url_q}
+                width={photo.width_q}
+                height={photo.height_q}
+              />
               <Card.Body>
                 <Button size='sm' variant='danger' onClick={() => { setSelectedPhotos(selectedPhotos.filter((selectedPhoto) => selectedPhoto !== photo.url_q)) }}>Remove</Button>
               </Card.Body>
@@ -26,7 +30,11 @@ export default function PhotosList (props: Props): React.JSX.Element {
               )
             : (
             <Card key={photo.url_q} className='m-2' style={{ width: `${photo.width_q}px` }}>
-              <Image alt='image' src={photo.url_q} width={photo.width_q} height={photo.height_q} />
+              <ImageCard
+                src={photo.url_q}
+                width={photo.width_q}
+                height={photo.height_q}
+              />
               <Card.Body>
                 <Button size='sm' variant='primary' onClick={() => { setSelectedPhotos([...selectedPhotos, photo.url_q]) }}>Add</Button>
               </Card.Body>
