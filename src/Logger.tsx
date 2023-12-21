@@ -1,4 +1,10 @@
+import React from 'react'
 import { ulid } from 'ulid'
+import { FaCircleInfo } from 'react-icons/fa6'
+import { IoWarning } from 'react-icons/io5'
+import { MdOutlineError } from 'react-icons/md'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { overlayTriggerDelayHide } from './const'
 
 type LogLevel = 'log' | 'info' | 'warn' | 'error'
 
@@ -72,5 +78,34 @@ class Logger {
 }
 
 const logger = new Logger('log:')
+
+export function logLevel2Icon (level: LogLevel): React.JSX.Element {
+  const icon = (() => {
+    switch (level) {
+      case 'log':
+        return <FaCircleInfo className='text-secondary' />
+      case 'info':
+        return <FaCircleInfo className='text-info' />
+      case 'warn':
+        return <IoWarning className='text-warning' />
+      case 'error':
+        return <MdOutlineError className='text-danger' />
+    }
+  })()
+
+  return (
+    <OverlayTrigger
+      placement="top"
+      delay={{ show: overlayTriggerDelayHide, hide: overlayTriggerDelayHide }}
+      overlay={(props) => (
+        <Tooltip {...props}>
+          {level}
+        </Tooltip>
+      )}
+    >
+      <div className='text-center'>{icon}</div>
+    </OverlayTrigger>
+  )
+}
 
 export default logger

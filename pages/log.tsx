@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Pagination, Table } from 'react-bootstrap'
 import dayjs from 'dayjs'
-import logger, { type Log } from '../src/Logger'
+import logger, { logLevel2Icon, type Log } from '../src/Logger'
 
 export default function LogPage (): React.JSX.Element {
   const [page, setPage] = useState(1)
@@ -34,7 +34,7 @@ export default function LogPage (): React.JSX.Element {
             return (
               <tr key={i}>
                 <td>{dayjs(log.date).format('YYYY-MM-DD HH:mm:ss')}</td>
-                <td>{log.level}</td>
+                <td>{logLevel2Icon(log.level)}</td>
                 <td>{log.message}</td>
               </tr>
             )
