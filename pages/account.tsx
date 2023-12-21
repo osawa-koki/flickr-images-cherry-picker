@@ -12,7 +12,7 @@ export default function AccountPage (): React.JSX.Element {
 
   return (
     <>
-      <h1>アカウント情報</h1>
+      <h1>Account Info</h1>
       <h2 className='mt-3'>
         <FaAws className='me-3 text-primary h1' />
         AWS S3
