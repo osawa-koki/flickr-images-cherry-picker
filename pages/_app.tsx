@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useState } from 'react'
 import { type AppProps } from 'next/app'
 import Head from 'next/head'
 
-import { ToastContainer } from 'react-toastify'
+import { ToastContainer, toast } from 'react-toastify'
 
 import 'react-toastify/dist/ReactToastify.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -62,8 +62,14 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
     const removedGroups = existingGroup.filter((group) => {
       return !savedGroups.includes(group)
     })
+    const addedGroups = savedGroups.filter((group) => {
+      return !existingGroup.includes(group)
+    })
     removedGroups.forEach((group) => {
       localStorage.removeItem(getLocalStorageKey(group))
+    })
+    addedGroups.forEach((group) => {
+      toast.info(`Group '${group}' is created.`)
     })
   }, [savedGroups])
 
