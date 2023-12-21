@@ -17,7 +17,7 @@ interface Props {
 }
 
 export default function SearchSetting (props: Props): React.JSX.Element {
-  const { savedGroups } = useContext(PhotosContext)
+  const { setCurrentGroup, savedGroups, setSavedGroups } = useContext(PhotosContext)
 
   const { group, text, perPage, objectiveCount, setGroup, setText, setPerPage, setObjectiveCount } = props
 
@@ -39,6 +39,9 @@ export default function SearchSetting (props: Props): React.JSX.Element {
           }}
           onCreateOption={(value) => {
             setGroup(value)
+            setCurrentGroup(value)
+            setSavedGroups([...savedGroups, value])
+            toast.info(`Group '${value}' is created.`)
           }}
           isValidNewOption={(inputValue) => {
             if (inputValue === '') return false
