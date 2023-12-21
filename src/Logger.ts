@@ -2,7 +2,7 @@ import { ulid } from 'ulid'
 
 type LogLevel = 'log' | 'info' | 'warn' | 'error'
 
-interface Log {
+export interface Log {
   level: LogLevel
   date: Date
   message: string
@@ -43,9 +43,15 @@ class Logger {
 
   // -----
 
-  public getLogs (page: number, perPage: number): Log[] {
+  public getLogs (page: number, perPage: number): {
+    logs: Log[]
+    page: number
+    perPage: number
+    totalCount: number
+    totalPages: number
+  } {
     const logs: Log[] = []
-    const keys = Object.keys(localStorage).filter(key => key.startsWith(this.prefix))
+    const keys = Object.keys(localStorage).filter(key => key.startsWith(this.prefix)).sort().reverse()
     const start = (page - 1) * perPage
     const end = start + perPage
     for (let i = start; i < end; i++) {
@@ -55,7 +61,13 @@ class Logger {
       if (logBody == null) continue
       logs.push(JSON.parse(logBody))
     }
-    return logs
+    return {
+      logs,
+      page,
+      perPage,
+      totalCount: keys.length,
+      totalPages: Math.ceil(keys.length / perPage)
+    }
   }
 }
 
