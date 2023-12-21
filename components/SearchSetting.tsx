@@ -4,6 +4,7 @@ import CreatableSelect from 'react-select/creatable'
 import { toast } from 'react-toastify'
 import { PhotosContext } from '../pages/_app'
 import { forbiddenChars } from '../src/const'
+import logger from '../src/Logger'
 
 interface Props {
   group: string
@@ -42,6 +43,7 @@ export default function SearchSetting (props: Props): React.JSX.Element {
             setCurrentGroup(value)
             setSavedGroups([...savedGroups, value])
             toast.info(`Group '${value}' is created.`)
+            logger.info(`Group '${value}' is created.`)
           }}
           isValidNewOption={(inputValue) => {
             if (inputValue === '') return false

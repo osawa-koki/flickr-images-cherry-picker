@@ -8,6 +8,8 @@ import generateZip from '../src/generateZip'
 import execDownload from '../src/execDownload'
 import amplifiedPhotosCounter from '../src/amplifiedPhotosCounter'
 import { toast } from 'react-toastify'
+import logger from '../src/Logger'
+import { desiredImageCountMax, desiredImageCountMin } from '../src/const'
 
 export default function GalleryPage (): React.JSX.Element {
   const router = useRouter()
@@ -32,6 +34,16 @@ export default function GalleryPage (): React.JSX.Element {
   const downloadZip = async (): Promise<void> => {
     setIsLoading(true)
 
+    if (savedPhotos.length < desiredImageCountMin) {
+      toast.warn(`It's recommended to have more than ${desiredImageCountMin} images.`)
+      logger.warn(`It's recommended to have more than ${desiredImageCountMin} images.`)
+    }
+
+    if (savedPhotos.length > desiredImageCountMax) {
+      toast.warn(`It's recommended to have less than ${desiredImageCountMax} images.`)
+      logger.warn(`It's recommended to have less than ${desiredImageCountMax} images.`)
+    }
+
     const blob = await generateZip({
       photos: savedPhotos,
       flip,
@@ -42,6 +54,8 @@ export default function GalleryPage (): React.JSX.Element {
     })
     execDownload(blob, `${currentGroup}.zip`)
 
+    logger.info(`Group "${currentGroup}" downloaded.\nfiles: ${savedPhotos.length} -> ${amplifiedPhotosCounter(savedPhotos.length, flip, rotate, rotateCount)}`)
+
     setIsLoading(false)
   }
 
@@ -50,6 +64,7 @@ export default function GalleryPage (): React.JSX.Element {
     setSavedGroups(savedGroups.filter((group) => group !== currentGroup))
     await router.push('/search/')
     toast.success(`Group "${currentGroup}" deleted.`)
+    logger.info(`Group "${currentGroup}" deleted.`)
   }
 
   useEffect(() => {
