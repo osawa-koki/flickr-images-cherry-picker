@@ -100,6 +100,7 @@ export default function SearchPage (): React.JSX.Element {
     if (Number(objectiveCount) === savedPhotos.length) {
       setCongrats(true)
       toast.success('Objective count reached!')
+      logger.info('Objective count reached!')
       setTimeout(() => {
         setCongrats(false)
       }, congratsMilliSeconds)
