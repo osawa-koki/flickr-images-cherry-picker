@@ -12,6 +12,7 @@ import ProgressViewer from '../components/ProgressViewer'
 import { congratsMilliSeconds } from '../src/const'
 import SearchPagination from '../components/SearchPagination'
 import numStrSetter from '../src/numStrSetter'
+import logger from '../src/Logger'
 
 const flickr = createFlickr(process.env.NEXT_PUBLIC_FLICKR_API_KEY!)
 
@@ -78,6 +79,7 @@ export default function SearchPage (): React.JSX.Element {
     setCurrentGroup(group)
     setSavedGroups([...savedGroups, group])
     fetchPhotos()
+    logger.info(`Searched!: group=${group}, text=${text}, perPage=${perPage}`)
   }
 
   useEffect(() => {
