@@ -13,7 +13,7 @@ import '../styles/menu.scss'
 
 import setting from '../setting'
 import Layout from '../components/Layout'
-import { photosLocalStorageKeyPrefix } from '../src/const'
+import { accountInfoLocalStorageKey, photosLocalStorageKeyPrefix } from '../src/const'
 
 export const Context = createContext({
   currentGroup: '',
@@ -21,7 +21,9 @@ export const Context = createContext({
   savedGroups: [] as string[],
   setSavedGroups: (_groups: string[]) => {},
   savedPhotos: [] as string[],
-  setSavedPhotos: (_photos: string[]) => {}
+  setSavedPhotos: (_photos: string[]) => {},
+  accountInfo: null as AccountInfo | null,
+  setAccountInfo: (_accountInfo: AccountInfo | null) => {}
 })
 
 const getLocalStorageKey = (group: string): string => `${photosLocalStorageKeyPrefix}${group}`
@@ -72,6 +74,21 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
     localStorage.setItem(getLocalStorageKey(currentGroup), JSON.stringify(sortedSavedPhotos))
   }, [savedPhotos])
 
+  // ===== アカウント情報 =====
+
+  const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null)
+
+  useEffect(() => {
+    const accountInfo = localStorage.getItem(accountInfoLocalStorageKey)
+    if (accountInfo == null) return
+    setAccountInfo(JSON.parse(accountInfo))
+  }, [])
+
+  useEffect(() => {
+    if (accountInfo == null) return
+    localStorage.setItem(accountInfoLocalStorageKey, JSON.stringify(accountInfo))
+  }, [accountInfo])
+
   if (savedGroups == null) {
     return <Spinner animation='border' />
   }
@@ -96,7 +113,9 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
           savedGroups,
           setSavedGroups,
           savedPhotos,
-          setSavedPhotos
+          setSavedPhotos,
+          accountInfo,
+          setAccountInfo
         }}>
           <Component {...pageProps} />
         </Context.Provider>
