@@ -15,7 +15,7 @@ import setting from '../setting'
 import Layout from '../components/Layout'
 import { photosLocalStorageKeyPrefix } from '../src/const'
 
-export const PhotosContext = createContext({
+export const Context = createContext({
   currentGroup: '',
   setCurrentGroup: (_group: string) => {},
   savedGroups: [] as string[],
@@ -90,7 +90,7 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
       </Head>
       <Layout>
         <div id='Modal'></div>
-        <PhotosContext.Provider value={{
+        <Context.Provider value={{
           currentGroup,
           setCurrentGroup,
           savedGroups,
@@ -99,7 +99,7 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
           setSavedPhotos
         }}>
           <Component {...pageProps} />
-        </PhotosContext.Provider>
+        </Context.Provider>
         <ToastContainer />
       </Layout>
     </>

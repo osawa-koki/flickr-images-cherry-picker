@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { Form } from 'react-bootstrap'
 import CreatableSelect from 'react-select/creatable'
 import { toast } from 'react-toastify'
-import { PhotosContext } from '../pages/_app'
+import { Context } from '../pages/_app'
 import { forbiddenChars } from '../src/const'
 import logger from '../src/Logger'
 import makeHelp from '../src/makeHelp'
@@ -19,7 +19,7 @@ interface Props {
 }
 
 export default function SearchSetting (props: Props): React.JSX.Element {
-  const { setCurrentGroup, savedGroups, setSavedGroups } = useContext(PhotosContext)
+  const { setCurrentGroup, savedGroups, setSavedGroups } = useContext(Context)
 
   const { group, text, perPage, objectiveCount, setGroup, setText, setPerPage, setObjectiveCount } = props
 
