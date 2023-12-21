@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import { PhotosContext } from '../pages/_app'
 import { forbiddenChars } from '../src/const'
 import logger from '../src/Logger'
+import makeHelp from '../src/makeHelp'
 
 interface Props {
   group: string
@@ -25,7 +26,10 @@ export default function SearchSetting (props: Props): React.JSX.Element {
   return (
     <>
       <Form.Group className='mt-3' controlId='formControlGroup'>
-        <Form.Label>Group</Form.Label>
+        <Form.Label>
+          Group
+          {makeHelp('Group is used to save photos to a specific folder.')}
+        </Form.Label>
         <CreatableSelect
           options={savedGroups.map((group) => {
             return { value: group, label: group }
@@ -57,15 +61,24 @@ export default function SearchSetting (props: Props): React.JSX.Element {
         />
       </Form.Group>
       <Form.Group className='mt-3' controlId='formControlText'>
-        <Form.Label>Search Text</Form.Label>
+        <Form.Label>
+          Search Text
+          {makeHelp('Search text is used to search photos from Flickr.')}
+        </Form.Label>
         <Form.Control type='text' placeholder='Enter search text' value={text} onChange={(e) => { setText(e.target.value) }} />
       </Form.Group>
       <Form.Group className='mt-3' controlId='formControlPerPage'>
-        <Form.Label>Per Page</Form.Label>
+        <Form.Label>
+          Per Page
+          {makeHelp('Per page is used to limit the number of photos to be searched.')}
+        </Form.Label>
         <Form.Control type='text' placeholder='Enter per page' value={perPage} onChange={(e) => { setPerPage(e.target.value) }} />
       </Form.Group>
       <Form.Group className='mt-3' controlId='formControlObjectiveCount'>
-        <Form.Label>Objective Count</Form.Label>
+        <Form.Label>
+          Objective Count
+          {makeHelp('Objective count is used to check if the number of photos is enough.')}
+        </Form.Label>
         <Form.Control type='text' placeholder='Enter objective count' value={objectiveCount} onChange={(e) => { setObjectiveCount(e.target.value) }} />
       </Form.Group>
       <hr />
