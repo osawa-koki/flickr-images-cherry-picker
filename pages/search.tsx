@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import React, { useContext, useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/router'
 import { type FlickrPhotosSearchParams, createFlickr } from 'flickr-sdk'
 import { Button } from 'react-bootstrap'
 import { toast } from 'react-toastify'
@@ -24,6 +25,8 @@ const baseFlickrPhotosSearchParams: FlickrPhotosSearchParams = {
 }
 
 export default function SearchPage (): React.JSX.Element {
+  const router = useRouter()
+
   const {
     setCurrentGroup,
     savedGroups,
@@ -50,6 +53,30 @@ export default function SearchPage (): React.JSX.Element {
   }
 
   const [photos, setPhotos] = useState<FlickrPhoto[]>([])
+
+  // ===== Parameter Setting =====
+
+  useEffect(() => {
+    if (router.query.group != null) setGroup(router.query.group as string)
+    if (router.query.text != null) setText(router.query.text as string)
+    if (router.query.perPage != null) _setPerPage(router.query.perPage as string)
+    if (router.query.objectiveCount != null) _setObjectiveCount(router.query.objectiveCount as string)
+  }, [router.query])
+
+  useEffect(() => {
+    if (group === '' || text === '' || perPage === '') return
+    void router.push({
+      pathname: router.pathname,
+      query: {
+        group,
+        text,
+        perPage,
+        objectiveCount
+      }
+    })
+  }, [group, text, perPage, objectiveCount])
+
+  // ===== Search =====
 
   const fetchPhotos = (): void => {
     flickr.flickr('flickr.photos.search', {
@@ -81,6 +108,8 @@ export default function SearchPage (): React.JSX.Element {
     fetchPhotos()
     logger.info(`Searched!: group=${group}, text=${text}, perPage=${perPage}`)
   }
+
+  // ===== State Management =====
 
   useEffect(() => {
     if (group === '' || text === '' || perPage === '') return
