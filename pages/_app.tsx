@@ -3,7 +3,7 @@ import { type AppProps } from 'next/app'
 import Head from 'next/head'
 
 import { Spinner } from 'react-bootstrap'
-import { ToastContainer } from 'react-toastify'
+import { ToastContainer, toast } from 'react-toastify'
 
 import 'react-toastify/dist/ReactToastify.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -13,7 +13,8 @@ import '../styles/menu.scss'
 
 import setting from '../setting'
 import Layout from '../components/Layout'
-import { photosLocalStorageKeyPrefix } from '../src/const'
+import { forbiddenChars, photosLocalStorageKeyPrefix } from '../src/const'
+import logger from '../src/Logger'
 
 export const Context = createContext({
   currentGroup: '',
@@ -25,7 +26,8 @@ export const Context = createContext({
   groups: [] as Array<{
     key: string
     photos: string[]
-  }>
+  }>,
+  execImport: (sharedData: SharedData) => {}
 })
 
 const getLocalStorageKey = (group: string): string => `${photosLocalStorageKeyPrefix}${group}`
@@ -88,6 +90,35 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
     })
   }
 
+  const execImport = (sharedData: SharedData): void => {
+    const success: string[] = []
+    sharedData.groups.forEach(({ key, photos }) => {
+      if (key == null || photos == null) {
+        toast.error('Invalid data')
+        logger.error('Invalid data')
+        return
+      }
+      if (groups.map(({ key }) => key).includes(key)) {
+        toast.error(`Group "${key}" already exists`)
+        logger.error(`Group "${key}" already exists`)
+        return
+      }
+      if (forbiddenChars.some((char) => key.includes(char))) {
+        toast.error(`Invalid group name: ${key}`)
+        logger.error(`Invalid group name: ${key}`)
+        return
+      }
+      localStorage.setItem(getLocalStorageKey(key), JSON.stringify(photos))
+      success.push(key)
+      toast.success(`Imported group "${key}"`)
+    })
+    toast.info(`Imported ${success.length} group(s)`)
+    logger.info(`Imported ${success.length} group(s)`)
+    if (success.length > 0) {
+      setSavedGroups([...(savedGroups ?? []), ...success])
+    }
+  }
+
   const groups = useMemo(() => {
     return getGroups()
   }, [savedGroups, savedPhotos])
@@ -117,7 +148,8 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
           setSavedGroups,
           savedPhotos,
           setSavedPhotos,
-          groups
+          groups,
+          execImport
         }}>
           <Component {...pageProps} />
         </Context.Provider>
