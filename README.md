@@ -5,7 +5,9 @@
 ![ロゴ](./docs/images/logo.jpeg)  
 ※ このロゴは[Bing Image Creator](https://www.bing.com)によって作成されました。  
 
-![成果物](./docs/images/fruit.gif)  
+![成果物(1)](./docs/images/fruit-1.gif)  
+
+![成果物(2)](./docs/images/fruit-2.gif)  
 
 ## 実行方法
 
