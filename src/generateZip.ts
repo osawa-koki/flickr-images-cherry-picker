@@ -1,16 +1,39 @@
 import JSZip from 'jszip'
-import photoAmplifier, { type PhotoAmplifierArgs } from './photoAmplifier'
+import imageFlipper from './imageFlipper'
+import imageRotater from './imageRotater'
 
-type GenerateZipOptions = PhotoAmplifierArgs
+interface GenerateZipOptions {
+  photos: string[]
+  flip: boolean
+  rotate: boolean
+  rotateFrom: number
+  rotateTo: number
+  rotateCount: number
+}
 
 export default async function generateZip (args: GenerateZipOptions): Promise<Blob> {
-  const blobsWithName = await photoAmplifier(args)
+  const { photos, flip, rotate, rotateFrom, rotateTo, rotateCount } = args
 
   const zip = new JSZip()
 
-  blobsWithName.forEach(({ name, blob }) => {
-    zip.file(name, blob)
+  const promises = photos.sort((a, b) => a.localeCompare(b)).map(async (photo, index) => {
+    const blob = await fetch(photo).then(async (res) => await res.blob())
+    const indexStr = index.toString().padStart(photos.length.toString().length, '0')
+    zip.file(`${indexStr}.jpg`, blob)
+
+    if (flip) {
+      const flippedBlob = await imageFlipper(blob)
+      zip.file(`${indexStr}-flipped.jpg`, flippedBlob)
+    }
+
+    if (rotate) {
+      const ratetedBlobs = await imageRotater(blob, rotateFrom, rotateTo, rotateCount)
+      ratetedBlobs.forEach((blob, i) => {
+        zip.file(`${indexStr}-rotated-${i}.jpg`, blob)
+      })
+    }
   })
+  await Promise.all(promises)
 
   return await zip.generateAsync({ type: 'blob' })
 }
