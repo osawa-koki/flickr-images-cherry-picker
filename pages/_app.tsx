@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useState } from 'react'
 import { type AppProps } from 'next/app'
 import Head from 'next/head'
 
+import { Spinner } from 'react-bootstrap'
 import { ToastContainer } from 'react-toastify'
 
 import 'react-toastify/dist/ReactToastify.css'
@@ -12,9 +13,9 @@ import '../styles/menu.scss'
 
 import setting from '../setting'
 import Layout from '../components/Layout'
-import { Spinner } from 'react-bootstrap'
+import { photosLocalStorageKeyPrefix } from '../src/const'
 
-export const PhotosContext = createContext({
+export const Context = createContext({
   currentGroup: '',
   setCurrentGroup: (_group: string) => {},
   savedGroups: [] as string[],
@@ -23,8 +24,7 @@ export const PhotosContext = createContext({
   setSavedPhotos: (_photos: string[]) => {}
 })
 
-const localStorageKeyPrefix = '_group:'
-const getLocalStorageKey = (group: string): string => `${localStorageKeyPrefix}${group}`
+const getLocalStorageKey = (group: string): string => `${photosLocalStorageKeyPrefix}${group}`
 
 export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.Element {
   const [currentGroup, setCurrentGroup] = useState<string>('')
@@ -36,9 +36,9 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
 
   useEffect(() => {
     const groups = Object.keys(localStorage).filter((key) => {
-      return key.startsWith(localStorageKeyPrefix)
+      return key.startsWith(photosLocalStorageKeyPrefix)
     }).map((key) => {
-      return key.replace(localStorageKeyPrefix, '')
+      return key.replace(photosLocalStorageKeyPrefix, '')
     })
     setSavedGroups(groups)
   }, [])
@@ -55,9 +55,9 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
   useEffect(() => {
     if (savedGroups == null) return
     const existingGroup = Object.keys(localStorage).filter((key) => {
-      return key.startsWith(localStorageKeyPrefix)
+      return key.startsWith(photosLocalStorageKeyPrefix)
     }).map((key) => {
-      return key.replace(localStorageKeyPrefix, '')
+      return key.replace(photosLocalStorageKeyPrefix, '')
     })
     const removedGroups = existingGroup.filter((group) => {
       return !savedGroups.includes(group)
@@ -90,7 +90,7 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
       </Head>
       <Layout>
         <div id='Modal'></div>
-        <PhotosContext.Provider value={{
+        <Context.Provider value={{
           currentGroup,
           setCurrentGroup,
           savedGroups,
@@ -99,7 +99,7 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
           setSavedPhotos
         }}>
           <Component {...pageProps} />
-        </PhotosContext.Provider>
+        </Context.Provider>
         <ToastContainer />
       </Layout>
     </>

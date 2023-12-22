@@ -5,7 +5,7 @@ import { type FlickrPhotosSearchParams, createFlickr } from 'flickr-sdk'
 import { Button } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 import Confetti from 'react-confetti'
-import { PhotosContext } from './_app'
+import { Context } from './_app'
 import ListedPhotos from '../components/ListedPhotos'
 import SearchSetting from '../components/SearchSetting'
 import ProgressViewer from '../components/ProgressViewer'
@@ -30,7 +30,7 @@ export default function SearchPage (): React.JSX.Element {
     setSavedGroups,
     savedPhotos,
     setSavedPhotos
-  } = useContext(PhotosContext)
+  } = useContext(Context)
 
   const [isLoading, setIsLoading] = useState(false)
   const [congrats, setCongrats] = useState(false)

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Button, Form } from 'react-bootstrap'
-import { PhotosContext } from './_app'
+import { Context } from './_app'
 import DownloadSetting from '../components/DownloadSetting'
 import PhotosGallery from '../components/PhotosGallery'
 import generateZip from '../src/generateZip'
@@ -21,7 +21,7 @@ export default function GalleryPage (): React.JSX.Element {
     setSavedGroups,
     savedPhotos,
     setSavedPhotos
-  } = useContext(PhotosContext)
+  } = useContext(Context)
 
   const [isLoading, setIsLoading] = useState(false)
 
