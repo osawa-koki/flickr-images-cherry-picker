@@ -21,6 +21,11 @@ const pages: Page[] = [
     name: 'Gallery'
   },
   {
+    emoji: '📚',
+    path: '/groups/',
+    name: 'Groups'
+  },
+  {
     emoji: '📝',
     path: '/log/',
     name: 'Log'

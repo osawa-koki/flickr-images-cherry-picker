@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, useEffect, useMemo, useState } from 'react'
 import { type AppProps } from 'next/app'
 import Head from 'next/head'
 
@@ -21,7 +21,11 @@ export const Context = createContext({
   savedGroups: [] as string[],
   setSavedGroups: (_groups: string[]) => {},
   savedPhotos: [] as string[],
-  setSavedPhotos: (_photos: string[]) => {}
+  setSavedPhotos: (_photos: string[]) => {},
+  groups: [] as Array<{
+    key: string
+    photos: string[]
+  }>
 })
 
 const getLocalStorageKey = (group: string): string => `${photosLocalStorageKeyPrefix}${group}`
@@ -72,6 +76,22 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
     localStorage.setItem(getLocalStorageKey(currentGroup), JSON.stringify(sortedSavedPhotos))
   }, [savedPhotos])
 
+  const getGroups = (): Array<{
+    key: string
+    photos: string[]
+  }> => {
+    if (savedGroups == null) return []
+    return savedGroups.map((group) => {
+      const photos = localStorage.getItem(getLocalStorageKey(group))
+      if (photos == null) return { key: group, photos: [] }
+      return { key: group, photos: JSON.parse(photos) }
+    })
+  }
+
+  const groups = useMemo(() => {
+    return getGroups()
+  }, [savedGroups, savedPhotos])
+
   if (savedGroups == null) {
     return <Spinner animation='border' />
   }
@@ -96,7 +116,8 @@ export default function MyApp ({ Component, pageProps }: AppProps): React.JSX.El
           savedGroups,
           setSavedGroups,
           savedPhotos,
-          setSavedPhotos
+          setSavedPhotos,
+          groups
         }}>
           <Component {...pageProps} />
         </Context.Provider>
