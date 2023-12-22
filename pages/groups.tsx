@@ -8,7 +8,7 @@ import logger from '../src/Logger'
 import execDownload from '../src/execDownload'
 
 export default function GroupsPage (): React.JSX.Element {
-  const { groups, setSavedGroups } = useContext(Context)
+  const { groups, setSavedGroups, execImport } = useContext(Context)
 
   const [tmpRenameGroup, setTmpRenameGroup] = useState<Record<string, string>>({})
   const [selectedGroups, setSelectedGroups] = useState<string[]>([])
@@ -34,13 +34,14 @@ export default function GroupsPage (): React.JSX.Element {
     setSavedGroups(groups.filter(({ key }) => key !== group).map(({ key }) => key))
     toast.success(`Deleted group "${group}"`)
     logger.info(`Deleted group "${group}"`)
+    setSelectedGroups(selectedGroups.filter((selectedGroup) => selectedGroup !== group))
   }
 
   const exportGroups = (): void => {
     const selected = groups.filter(({ key }) => selectedGroups.includes(key))
-    const data = {
+    const data: SharedData = {
       version: '1.0.0',
-      date: new Date().toISOString(),
+      date: new Date(),
       groups: selected.map(({ key, photos }) => {
         return {
           key,
@@ -52,6 +53,33 @@ export default function GroupsPage (): React.JSX.Element {
     execDownload(blob, `exported-${dayjs().format('YYYYMMDD_HHmmss')}.json`)
     toast.success(`Exported ${selectedGroups.length} group(s)`)
     logger.info(`Exported ${selectedGroups.length} group(s)`)
+  }
+
+  const importGroups = (): void => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = '.json'
+    input.addEventListener('change', () => {
+      if (input.files == null) return
+      const file = input.files[0]
+      const reader = new FileReader()
+      reader.addEventListener('load', () => {
+        const data: SharedData = JSON.parse(reader.result as string)
+        if (data.version !== '1.0.0') {
+          toast.error(`Invalid version: ${data.version}`)
+          logger.error(`Invalid version: ${data.version}`)
+          return
+        }
+        if (data.groups == null) {
+          toast.error('Invalid data')
+          logger.error('Invalid data')
+          return
+        }
+        execImport(data)
+      })
+      reader.readAsText(file)
+    })
+    input.click()
   }
 
   return (
@@ -140,6 +168,7 @@ export default function GroupsPage (): React.JSX.Element {
               setSavedGroups(groups.filter(({ key }) => !selectedGroups.includes(key)).map(({ key }) => key))
               toast.success(`Deleted ${selectedGroups.length} group(s)`)
               logger.info(`Deleted ${selectedGroups.length} group(s)`)
+              setSelectedGroups([])
             }}
           >
             Delete
@@ -152,6 +181,13 @@ export default function GroupsPage (): React.JSX.Element {
           </Button>
         </div>
       )}
+      <hr />
+      <Button
+        variant='primary'
+        onClick={importGroups}
+      >
+        Import
+      </Button>
     </>
   )
 }
